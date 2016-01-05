@@ -24,7 +24,7 @@ public class Server extends Node {
     public static int MAX_CPU = 0;
 
     public double getPowerUsage(){
-        return MIN_POWER + (this.getCPUUsage()/MAX_CPU) * (MAX_POWER - MIN_POWER);
+        return MIN_POWER + (this.getCPU()/MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
     public Server(int MAX_CPU){
