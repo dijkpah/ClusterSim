@@ -1,6 +1,5 @@
 package vm;
 
-import cluster.Connection;
 import cluster.Path;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,7 +15,10 @@ public class VM implements SimulationEntity {
     /**
      * The number of instructions available per second (=clock time * number of cores).
      */
-    @NonNull private int maxCPU;
+    @NonNull private int vCPU;
+
+    private final double MAX_CPU = 100* vCPU;
+
     /**
      * The amount of RAM, in GiB.
      */
@@ -26,6 +28,7 @@ public class VM implements SimulationEntity {
      */
     @NonNull private int maxBandwidth;
 
+    /** @invariant 0 <= CPU <= MAX_CPU**/
     private int CPU;
     private List<Path> paths = new ArrayList<Path>();
 
