@@ -1,3 +1,5 @@
+package graph;
+
 public class Edge {
 
     Node first;
