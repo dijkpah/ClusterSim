@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public abstract class Node {
 
-    List<Edge> edges;
+    private List<Edge> edges = new ArrayList<Edge>();
 
     public Node(List<Edge> edges){
         this.edges = new ArrayList<Edge>();
