@@ -32,23 +32,39 @@ public class Server extends Node {
         this.vms = new ArrayList<VM>();
     }
 
+    /**
+     * Add a VM to this server.
+     * @param vm
+     */
     public void addVM(VM vm){
         this.vms.add(vm);
     }
 
+    /**
+     * Remove a VM from this server.
+     * @param vm
+     */
     public void removeVM(VM vm){
         this.vms.remove(vm);
     }
 
     /**
      * Total MIPS done now
-     * @invariant 0<= CPULoad <= MAX_CPU
+     * @invariant 0<= \result <= MAX_CPU
      */
-    public int getCPUUsage(){
-        return 0;//TODO
+    public int getCPU(){
+        int total = 0;
+        for(VM vm : vms){
+            total += vm.getCPU();
+        }
+        return total;
     }
 
-    public int getAssignedCPUUsage(){
+    /**
+     * Get the assigned amount of CPU to VMs.
+     * @return
+     */
+    public int getAssignedCPU(){
         int total = 0;
         for(VM vm : vms){
             total += vm.getMaxCPU();

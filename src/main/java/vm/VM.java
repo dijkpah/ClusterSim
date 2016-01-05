@@ -1,8 +1,13 @@
 package vm;
 
+import cluster.Connection;
+import cluster.Path;
 import lombok.Data;
 import lombok.NonNull;
 import simulation.SimulationEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
@@ -20,6 +25,9 @@ public class VM implements SimulationEntity {
      * The maximum bandwidth of the internet connection, in Mbps.
      */
     @NonNull private int maxBandwidth;
+
+    private int CPU;
+    private List<Path> paths = new ArrayList<Path>();
 
     public void tick() {
         //TODO
