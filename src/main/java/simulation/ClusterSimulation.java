@@ -4,6 +4,10 @@ import cluster.*;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
+import lombok.Data;
+import lombok.NonNull;
+import migration.MigrationPolicy;
+import migration.NoMigrationPolicy;
 import vm.M4LargeVM;
 import vm.VM;
 
@@ -13,31 +17,28 @@ import java.util.List;
 /**
  * A simulation of a cluster
  */
+@Data
 public class ClusterSimulation {
     /**
      * The graph this simulation runs on.
      */
-    private Graph<Node, Edge> graph;
+    @NonNull private Graph<Node, Edge> graph;
 
     /**
-     * Creates a new simulation of a cluster with the given graph.
-     *
-     * @param graph The graph to run the simulation on.
+     * The MigrationPolicy to use in this simulation.
      */
-    public ClusterSimulation(Graph<Node, Edge> graph) {
-        this.graph = graph;
-    }
+    @NonNull private MigrationPolicy migrationPolicy;
 
-    public long clock = 0;
+    public long clock;
 
     /**
      * Start the simulation
      */
     public void run(int ticks) {
-        int time = 0;
-        while (time < ticks) {
+        clock = 0;
+        while (clock < ticks) {
             graph.tick();
-            time++;
+            clock++;
             /**
              * TODO: implement
              */
@@ -51,7 +52,7 @@ public class ClusterSimulation {
         System.out.println(graph);
 
         // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(graph);
+        ClusterSimulation simulation = new ClusterSimulation(graph, new NoMigrationPolicy());
 
         //Set time
         int ticks = 15;
@@ -63,7 +64,7 @@ public class ClusterSimulation {
     /**
      * Creates a simple cluster with one switch, two servers and one VM on both server.
      */
-    public static Graph simpleCluster() {
+    public static Graph<Node, Edge> simpleCluster() {
         List<Node> nodes = new ArrayList<Node>();
         List<Edge> edges = new ArrayList<Edge>();
 
