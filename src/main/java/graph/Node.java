@@ -1,9 +1,13 @@
 package graph;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public abstract class Node {
+
     List<Edge> edges;
 
     public Node(List<Edge> edges){
@@ -20,9 +24,5 @@ public abstract class Node {
 
     public void addEdges(List<Edge> edges){
         this.edges.addAll(edges);
-    }
-
-    public List<Edge> getEdges(){
-        return this.edges;
     }
 }

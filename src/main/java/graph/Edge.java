@@ -1,9 +1,12 @@
 package graph;
 
+import lombok.Data;
+
+@Data
 public abstract class Edge {
 
-    Node first;
-    Node second;
+    private Node first;
+    private Node second;
 
     public Edge(Node first, Node second){
         this.setEdges(first, second);
