@@ -10,7 +10,7 @@ public class VM {
     /**
      * The number of instructions available per second (=clock time * number of cores).
      */
-    @NonNull private long maxCPU;
+    @NonNull private int maxCPU;
     /**
      * The amount of RAM, in GiB.
      */

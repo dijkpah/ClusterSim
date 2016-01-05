@@ -16,19 +16,19 @@ public class Server extends Node {
     public static final int MIN_POWER = 200;
 
     /**Maximum possible CPU load in MIPS*/
-    public static long MAX_CPU = 0;
+    public static int MAX_CPU = 0;
 
     /**
      * Total MIPS done now
      * @invariant 0<= CPULoad <= MAX_CPU
      */
-    private long CPULoad = 0;
+    private int CPULoad = 0;
 
     public double getPowerUsage(){
         return MIN_POWER + (CPULoad/MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
-    public Server(long MAX_CPU){
+    public Server(int MAX_CPU){
         this.MAX_CPU = MAX_CPU;
     }
 }
