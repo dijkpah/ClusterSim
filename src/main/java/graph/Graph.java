@@ -26,6 +26,9 @@ public class Graph<N extends Node,E extends Edge> implements SimulationEntity {
         for(E edge : edges){
             edge.tick();
         }
+        for(Path connection : connections){
+            connection.tick();
+        }
         /**
          * TODO: implement
          */

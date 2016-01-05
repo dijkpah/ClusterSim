@@ -58,6 +58,9 @@ public class Server extends Node {
 
     @Override
     public void tick() {
-
+        for(VM vm : vms){
+            vm.tick();
+        }
+        //TODO
     }
 }
