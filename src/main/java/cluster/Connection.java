@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class Connection extends Edge {
 
-    public Connection(Node first, Node second){
-        super(first, second);
+    public Connection(Node node1, Node node2) {
+        super(node1, node2);
     }
 
     @Override
