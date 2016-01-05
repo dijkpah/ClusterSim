@@ -1,6 +1,8 @@
 package graph;
 
 import cluster.Path;
+import cluster.Server;
+import cluster.Switch;
 import lombok.Data;
 import simulation.SimulationEntity;
 
@@ -33,5 +35,4 @@ public class Graph<N extends Node,E extends Edge> implements SimulationEntity {
          * TODO: implement
          */
     }
-
 }
