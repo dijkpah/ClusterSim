@@ -25,11 +25,19 @@ public class ClusterSimulation {
         this.graph = graph;
     }
 
+    public long clock = 0;
+
     /**
      * Start the simulation
      */
-    public void start() {
-
+    public void run(int ticks) {
+        int time = 0;
+        while(time < ticks){
+            graph.tick();
+            /**
+             * TODO: implement
+             */
+        }
     }
 
     public static void main(String[] args) {
@@ -41,7 +49,10 @@ public class ClusterSimulation {
         // Create the simulation
         ClusterSimulation simulation = new ClusterSimulation(graph);
 
+        //Set time
+        int ticks = 15;
+
         // Start
-        simulation.start();
+        simulation.run(ticks);
     }
 }

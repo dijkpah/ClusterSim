@@ -31,4 +31,9 @@ public class Server extends Node {
     public Server(int MAX_CPU){
         this.MAX_CPU = MAX_CPU;
     }
+
+    @Override
+    public void tick() {
+
+    }
 }

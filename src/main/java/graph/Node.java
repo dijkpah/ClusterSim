@@ -1,12 +1,13 @@
 package graph;
 
 import lombok.Data;
+import simulation.SimulationEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public abstract class Node {
+public abstract class Node implements SimulationEntity {
 
     private List<Edge> edges = new ArrayList<Edge>();
 
@@ -25,4 +26,6 @@ public abstract class Node {
     public void addEdges(List<Edge> edges){
         this.edges.addAll(edges);
     }
+
+    public abstract void tick();
 }

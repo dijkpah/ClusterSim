@@ -2,9 +2,10 @@ package graph;
 
 import lombok.Data;
 import lombok.NonNull;
+import simulation.SimulationEntity;
 
 @Data
-public abstract class Edge {
+public abstract class Edge implements SimulationEntity{
 
     @NonNull private Node firstNode;
     @NonNull private Node secondNode;
@@ -13,4 +14,6 @@ public abstract class Edge {
         this.firstNode = firstNode;
         this.secondNode = secondNode;
     }
+
+    public abstract void tick();
 }
