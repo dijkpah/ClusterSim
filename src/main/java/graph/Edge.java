@@ -1,23 +1,16 @@
 package graph;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public abstract class Edge {
 
-    private Node first;
-    private Node second;
+    @NonNull private Node firstNode;
+    @NonNull private Node secondNode;
 
-    public Edge(Node first, Node second){
-        this.setEdges(first, second);
-    }
-
-    public Edge(){
-
-    }
-
-    public void setEdges(Node first, Node second){
-        this.first = first;
-        this.second = second;
+    public void setNodes(Node firstNode, Node secondNode){
+        this.firstNode = firstNode;
+        this.secondNode = secondNode;
     }
 }

@@ -2,9 +2,6 @@ package simulation;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
-/**
- * Created by Dennis on 1/5/2016.
- */
 public class NormalLoadGenerator implements LoadGenerator {
 
     private NormalDistribution distribution;
