@@ -37,6 +37,7 @@ public class ClusterSimulation {
         int time = 0;
         while (time < ticks) {
             graph.tick();
+            time++;
             /**
              * TODO: implement
              */
@@ -46,6 +47,8 @@ public class ClusterSimulation {
     public static void main(String[] args) {
         // Build the graph
         Graph<Node, Edge> graph = simpleCluster();
+
+        System.out.println(graph);
 
         // Create the simulation
         ClusterSimulation simulation = new ClusterSimulation(graph);

@@ -15,6 +15,5 @@ public class Path implements SimulationEntity {
     @NonNull private Node secondEndPoint;
 
     public void tick() {
-        
     }
 }

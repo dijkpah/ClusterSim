@@ -4,6 +4,7 @@ import cluster.Connection;
 import cluster.Path;
 import lombok.Data;
 import lombok.NonNull;
+import simulation.Params;
 import simulation.SimulationEntity;
 
 import java.util.ArrayList;
@@ -26,10 +27,18 @@ public class VM implements SimulationEntity {
      */
     @NonNull private int maxBandwidth;
 
+    public VM(int maxCPU, int maxRAM, int maxBandwidth){
+        this.maxCPU = maxCPU;
+        this.maxRAM = maxRAM;
+        this.maxBandwidth = maxBandwidth;
+        this.CPU = (int)(Params.INITIAL_VM_CPU_USAGE * maxCPU);
+    }
+
     private int CPU;
     private List<Path> paths = new ArrayList<Path>();
 
     public void tick() {
+        System.out.println("Tick " + this.toString());
         //TODO
     }
 }
