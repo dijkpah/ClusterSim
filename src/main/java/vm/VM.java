@@ -12,11 +12,16 @@ import java.util.List;
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
 @Data
-public class VM implements SimulationEntity {
+public abstract class VM implements SimulationEntity {
     /**
      * The number of instructions available per second (=clock time * number of cores).
      */
-    @NonNull private int maxCPU;
+    @NonNull public final int vCPUs;
+
+    public int MAX_CPU(){
+        return this.vCPUs * 100;
+    }
+
     /**
      * The amount of RAM, in GiB.
      */
@@ -26,11 +31,12 @@ public class VM implements SimulationEntity {
      */
     @NonNull private int maxBandwidth;
 
-    public VM(int maxCPU, int maxRAM, int maxBandwidth){
-        this.maxCPU = maxCPU;
+    /** @invariant 0 <= CPU <= MAX_CPU()**/
+    public VM(int vCPUs, int maxRAM, int maxBandwidth){
+        this.vCPUs = vCPUs;
         this.maxRAM = maxRAM;
         this.maxBandwidth = maxBandwidth;
-        this.CPU = (int)(Params.INITIAL_VM_CPU_USAGE * maxCPU);
+        this.CPU = (int)(Params.INITIAL_VM_CPU_USAGE * this.MAX_CPU());
     }
 
     private int CPU;
@@ -40,4 +46,5 @@ public class VM implements SimulationEntity {
         System.out.println("Tick " + this.toString());
         //TODO
     }
+
 }

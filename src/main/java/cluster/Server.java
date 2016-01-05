@@ -18,10 +18,12 @@ public class Server extends Node {
      */
     public static final int MAX_POWER = 300;
     public static final int MIN_POWER = 200;
+    /** Amount of hyperthreads*/
+    public static final int vCPUs = 1;
     private List<VM> vms;
 
-    /**Maximum possible CPU load in MIPS*/
-    public static int MAX_CPU = 0;
+    /**Maximum possible CPU load in percent (100% per core * cores)*/
+    public static int MAX_CPU = 100 * vCPUs;
 
     public double getPowerUsage(){
         return MIN_POWER + (this.getCPU()/MAX_CPU) * (MAX_POWER - MIN_POWER);
@@ -67,7 +69,7 @@ public class Server extends Node {
     public int getAssignedCPU(){
         int total = 0;
         for(VM vm : vms){
-            total += vm.getMaxCPU();
+            total += vm.getMAX_CPU();
         }
         return total;
     }
