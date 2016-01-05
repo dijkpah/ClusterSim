@@ -23,14 +23,8 @@ public class Server extends Node {
     /**Maximum possible CPU load in MIPS*/
     public static int MAX_CPU = 0;
 
-    /**
-     * Total MIPS done now
-     * @invariant 0<= CPULoad <= MAX_CPU
-     */
-    private int CPULoad = 0;
-
     public double getPowerUsage(){
-        return MIN_POWER + (CPULoad/MAX_CPU) * (MAX_POWER - MIN_POWER);
+        return MIN_POWER + (this.getCPUUsage()/MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
     public Server(int MAX_CPU){
@@ -46,8 +40,12 @@ public class Server extends Node {
         this.vms.remove(vm);
     }
 
+    /**
+     * Total MIPS done now
+     * @invariant 0<= CPULoad <= MAX_CPU
+     */
     public int getCPUUsage(){
-
+        return 0;//TODO
     }
 
     public int getAssignedCPUUsage(){
