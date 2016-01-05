@@ -1,4 +1,4 @@
-package cluster;
+package graph;
 
 import graph.Edge;
 import graph.Node;

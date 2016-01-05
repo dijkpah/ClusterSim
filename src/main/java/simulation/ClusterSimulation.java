@@ -4,8 +4,10 @@ import cluster.*;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
+import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
+import migration.Migration;
 import migration.MigrationPolicy;
 import migration.NoMigrationPolicy;
 import vm.M4LargeVM;
@@ -38,11 +40,21 @@ public class ClusterSimulation {
         clock = 0;
         while (clock < ticks) {
             graph.tick();
+            List<Migration> migrations = migrationPolicy.update(graph);
+            executeMigrations(migrations);
             clock++;
-            /**
-             * TODO: implement
-             */
         }
+    }
+
+    private void executeMigrations(List<Migration> migrations) {
+        for(Migration migration : migrations){
+            executeMigration(migration);
+        }
+
+    }
+
+    private void executeMigration(Migration migration) {
+        Path path = graph.getPath(migration);
     }
 
     public static void main(String[] args) {

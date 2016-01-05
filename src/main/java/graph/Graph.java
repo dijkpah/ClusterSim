@@ -1,8 +1,5 @@
 package graph;
 
-import cluster.Path;
-import cluster.Server;
-import cluster.Switch;
 import lombok.Data;
 import simulation.SimulationEntity;
 
@@ -34,5 +31,20 @@ public class Graph<N extends Node,E extends Edge> implements SimulationEntity {
         /**
          * TODO: implement
          */
+    }
+
+    /**
+     * Gets the shortest path of edges from node1 to node2
+     * @param node1
+     * @param node2
+     */
+    public Path getPath(Node node1, Node node2){
+        // TODO
+        for(Edge edge : node1.getEdges()){
+            if(edge.getFirstNode().equals(node2) || edge.getSecondNode().equals(node2)){
+                //return new Path(new ArrayList<E>)
+            }
+        }
+        return null;
     }
 }

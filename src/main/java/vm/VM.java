@@ -1,7 +1,6 @@
 package vm;
 
-import cluster.Connection;
-import cluster.Path;
+import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
 import simulation.Params;
