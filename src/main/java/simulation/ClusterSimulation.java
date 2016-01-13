@@ -111,10 +111,10 @@ public class ClusterSimulation {
         return new Graph<Node, Edge>(nodes, edges);
     }
 
-    private static Connection createConnection(Node node1, Node node2) {
-        Connection connection = new Connection(node1, node2);
-        node1.addEdge(connection);
-        node2.addEdge(connection);
-        return connection;
+    private static Cable createConnection(Node node1, Node node2) {
+        Cable cable = new Cable(node1, node2);
+        node1.addEdge(cable);
+        node2.addEdge(cable);
+        return cable;
     }
 }

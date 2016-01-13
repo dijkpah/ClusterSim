@@ -1,18 +1,21 @@
 package cluster;
 
+import cluster.Cable;
 import graph.Edge;
 import graph.Node;
-import lombok.Data;
+import graph.Path;
+import lombok.NonNull;
 
-@Data
-public class Connection extends Edge {
+import java.util.List;
 
-    public Connection(Node node1, Node node2) {
-        super(node1, node2);
-    }
+public class Connection extends Path {
 
-    @Override
-    public void tick() {
-        //TODO
+    @NonNull private List<Cable> edges;
+    @NonNull private Node firstEndPoint;
+    @NonNull private Node secondEndPoint;
+
+
+    public Connection(List<Edge> edges, Node firstEndPoint, Node secondEndPoint) {
+        super(edges, firstEndPoint, secondEndPoint);
     }
 }
