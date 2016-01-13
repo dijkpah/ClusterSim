@@ -69,16 +69,27 @@ public class Server extends Node {
     public int getAssignedCPU(){
         int total = 0;
         for(VM vm : vms){
-            total += vm.getMAX_CPU();
+            total += vm.MAX_CPU();
         }
         return total;
     }
 
     @Override
     public void tick() {
+        //TODO: finish previously started migrations
+
+        //First fluctuate load of VMs
         for(VM vm : vms){
             vm.tick();
         }
-        //TODO
+        //TODO: tag new VMs for migrations
+        //TODO: update machine state if going to sleep or woken up
+        //TODO: reserve room for VMs on physical machines
     }
+
+    public enum State{
+        SLEEPING,
+        AVAILABLE
+    }
+
 }

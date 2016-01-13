@@ -19,12 +19,15 @@ public class Graph<N extends Node,E extends Edge> implements SimulationEntity {
     }
 
     public void tick(){
+        //First handle load fluctuations and migrations
         for(N node : nodes){
             node.tick();
         }
+        //TODO: is this necessary?
         for(E edge : edges){
             edge.tick();
         }
+        //Then update the connections that are changed
         for(Path connection : connections){
             connection.tick();
         }

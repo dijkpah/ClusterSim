@@ -11,4 +11,5 @@ public class Switch extends Node implements SimulationEntity {
     public void tick() {
 
     }
+
 }

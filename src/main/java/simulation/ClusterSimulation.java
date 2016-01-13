@@ -4,7 +4,6 @@ import cluster.*;
 import graph.Edge;
 import graph.Graph;
 import graph.Node;
-import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
@@ -54,7 +53,7 @@ public class ClusterSimulation {
     }
 
     private void executeMigration(Migration migration) {
-        Path path = graph.getPath(migration);
+        //Path path = graph.getPath(migration);
     }
 
     public static void main(String[] args) {

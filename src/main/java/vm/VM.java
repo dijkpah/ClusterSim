@@ -3,6 +3,8 @@ package vm;
 import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
+import simulation.LoadGenerator;
+import simulation.NormalLoadGenerator;
 import simulation.Params;
 import simulation.SimulationEntity;
 
@@ -31,20 +33,34 @@ public abstract class VM implements SimulationEntity {
      */
     @NonNull private int maxBandwidth;
 
+    private LoadGenerator loadGenerator;
+
     /** @invariant 0 <= CPU <= MAX_CPU()**/
     public VM(int vCPUs, int maxRAM, int maxBandwidth){
         this.vCPUs = vCPUs;
         this.maxRAM = maxRAM;
         this.maxBandwidth = maxBandwidth;
         this.CPU = (int)(Params.INITIAL_VM_CPU_USAGE * this.MAX_CPU());
+        this.loadGenerator = new NormalLoadGenerator();
     }
 
     private int CPU;
     private List<Path> paths = new ArrayList<Path>();
 
+    private void fluctuateLoad(){
+        this.CPU = (int) loadGenerator.generate(this.CPU, 0, this.MAX_CPU());
+    }
+
     public void tick() {
+        this.fluctuateLoad();
         System.out.println("Tick " + this.toString());
         //TODO
+    }
+
+    public enum State{
+        RUNNING,
+        MIGRATING,
+        RESERVED
     }
 
 }
