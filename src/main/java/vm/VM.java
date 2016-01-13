@@ -3,6 +3,7 @@ package vm;
 import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.ToString;
 import simulation.LoadGenerator;
 import simulation.NormalLoadGenerator;
 import simulation.Params;
@@ -14,7 +15,11 @@ import java.util.List;
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
 @Data
+@ToString(exclude={"paths","loadGenerator"})
 public abstract class VM implements SimulationEntity {
+
+    @NonNull public final int id;
+
     /**
      * The number of instructions available per second (=clock time * number of cores).
      */
@@ -36,7 +41,8 @@ public abstract class VM implements SimulationEntity {
     private LoadGenerator loadGenerator;
 
     /** @invariant 0 <= CPU <= MAX_CPU()**/
-    public VM(int vCPUs, int maxRAM, int maxBandwidth){
+    public VM(int id, int vCPUs, int maxRAM, int maxBandwidth){
+        this.id = id;
         this.vCPUs = vCPUs;
         this.maxRAM = maxRAM;
         this.maxBandwidth = maxBandwidth;

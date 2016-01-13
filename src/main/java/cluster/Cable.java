@@ -15,4 +15,8 @@ public class Cable extends Edge {
     public void tick() {
         //TODO
     }
+
+    public String toString(){
+        return "\r\n<"+this.getFirstNode()+","+this.getSecondNode()+">";
+    }
 }

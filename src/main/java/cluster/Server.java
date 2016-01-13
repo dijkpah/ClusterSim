@@ -29,7 +29,8 @@ public class Server extends Node {
         return MIN_POWER + (this.getCPU()/MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
-    public Server(int MAX_CPU){
+    public Server(int id, int MAX_CPU){
+        super(id);//superidee!
         this.MAX_CPU = MAX_CPU;
         this.vms = new ArrayList<VM>();
     }

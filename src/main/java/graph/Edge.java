@@ -16,4 +16,5 @@ public abstract class Edge implements SimulationEntity{
     }
 
     public abstract void tick();
+
 }

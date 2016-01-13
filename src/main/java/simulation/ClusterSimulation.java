@@ -80,17 +80,17 @@ public class ClusterSimulation {
         List<Edge> edges = new ArrayList<Edge>();
 
         // Create world
-        World world = new World();
+        World world = new World(0);
 
-        Switch switch1 = new Switch();
+        Switch switch1 = new Switch(1);
 
         // Create servers
-        Server server1 = new SmallServer();
-        Server server2 = new SmallServer();
+        Server server1 = new SmallServer(1);
+        Server server2 = new SmallServer(2);
 
         // Create VMs
-        VM vm1 = new M4LargeVM();
-        VM vm2 = new M4LargeVM();
+        VM vm1 = new M4LargeVM(1);
+        VM vm2 = new M4LargeVM(2);
 
         // Add VMs to server
         server1.addVM(vm1);

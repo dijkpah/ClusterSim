@@ -6,7 +6,7 @@ public class SmallServer extends Server{
     //Source: http://www.cpu-world.com/CPUs/Xeon/Intel-Xeon%20E5-2676%20v3.html
     public static final int vCPUs = 12;
 
-    public SmallServer() {
-        super(2400);//2.4 GHz
+    public SmallServer(int id) {
+        super(id, 2400);//2.4 GHz
     }
 }
