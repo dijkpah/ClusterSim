@@ -88,6 +88,11 @@ public class Server extends Node {
         //TODO: reserve room for VMs on physical machines
     }
 
+    public boolean hasSLAViolation(){
+        return getCPU() >= getAssignedCPU();
+    }
+
+
     public enum State{
         SLEEPING,
         AVAILABLE
