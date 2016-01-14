@@ -2,13 +2,14 @@ package simulation;
 
 import cluster.*;
 import graph.Edge;
-import graph.Graph;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
 import migration.NoMigrationPolicy;
+import switches.MainSwitch;
+import switches.Switch;
 import vm.M4LargeVM;
 import vm.VM;
 
@@ -84,7 +85,7 @@ public class ClusterSimulation {
         // Create world
         World world = new World(0);
 
-        Switch switch1 = new Switch(1);
+        Switch switch1 = new MainSwitch(1);
 
         // Create servers
         Server server1 = new SmallServer(1);
@@ -129,7 +130,7 @@ public class ClusterSimulation {
      * @return A Cable between the nodes.
      */
     private static Cable createCable(Node node1, Node node2) {
-        Cable cable = new Cable(node1, node2);
+        Cable cable = new Cable(node1, node2, 0);
         node1.addEdge(cable);
         node2.addEdge(cable);
         return cable;

@@ -11,14 +11,22 @@ import java.util.List;
 @Data
 public class ExcelLogger {
 
-    private List<Integer> requestConsumption = new ArrayList<Integer>();
-    private List<Integer> migrationConsumption = new ArrayList<Integer>();
-    private List<Integer> groupedConsumption = new ArrayList<Integer>();
-    private List<Integer> switchConsumption = new ArrayList<Integer>();
     private List<Integer> serverConsumption = new ArrayList<Integer>();
+    private List<Integer> externalNetworkConsumption = new ArrayList<Integer>();
+    private List<Integer> internalNetworkConsumption = new ArrayList<Integer>();
+    private List<Integer> migrationNetworkConsumption = new ArrayList<Integer>();
+    private List<Integer> baseSwitchConsumption = new ArrayList<Integer>();
     private static final String SEPARATOR = ",";
 
-    public void makeGraphs(){
+    public void addTick(int server, int switchBase, int external, int internal, int migration){
+        this.serverConsumption.add(server);
+        this.baseSwitchConsumption.add(switchBase);
+        this.externalNetworkConsumption.add(external);
+        this.internalNetworkConsumption.add(internal);
+        this.migrationNetworkConsumption.add(migration);
+    }
+
+    public void makeGraph(){
         int ticks = serverConsumption.size();
 
         //Create file
@@ -32,26 +40,26 @@ public class ExcelLogger {
         }
 
         //Add headers
-        writer.println("Requests"+SEPARATOR);
-        writer.println("Migrations"+SEPARATOR);
-        writer.println("Communication"+SEPARATOR);
-        writer.println("Switches"+SEPARATOR);
         writer.println("Servers"+SEPARATOR);
+        writer.println("Switch Base"+SEPARATOR);
+        writer.println("External Traffic"+SEPARATOR);
+        writer.println("Internal Traffic"+SEPARATOR);
+        writer.println("Migrations"+SEPARATOR);
 
         //Add ticks
         for(int i=0;i<ticks;i++){
-            writer.println(requestConsumption.get(i)+SEPARATOR);
-            writer.println(migrationConsumption.get(i)+SEPARATOR);
-            writer.println(groupedConsumption.get(i)+SEPARATOR);
-            writer.println(switchConsumption.get(i)+SEPARATOR);
             writer.println(serverConsumption.get(i)+SEPARATOR);
+            writer.println(baseSwitchConsumption.get(i)+SEPARATOR);
+            writer.println(externalNetworkConsumption.get(i)+SEPARATOR);
+            writer.println(internalNetworkConsumption.get(i)+SEPARATOR);
+            writer.println(migrationNetworkConsumption.get(i)+SEPARATOR);
         }
         writer.close();
     }
 
    public static void main(String[] args){
        ExcelLogger logger = new ExcelLogger();
-       logger.makeGraphs();
+       logger.makeGraph();
    }
 
 }

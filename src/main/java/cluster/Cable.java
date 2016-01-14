@@ -14,7 +14,7 @@ public class Cable extends Edge {
     @NonNull private int capacity;
 
     public Cable(Node node1, Node node2, int capacity) {
-        super(node1, node2, 0);
+        super(node1, node2, 0);//Weight is zero at start
         this.capacity = capacity;
     }
 
