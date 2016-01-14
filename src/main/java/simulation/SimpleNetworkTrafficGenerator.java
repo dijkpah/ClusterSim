@@ -5,10 +5,10 @@ package simulation;
  */
 public class SimpleNetworkTrafficGenerator implements NetworkTrafficGenerator {
     public int generateBetweenVM(int previous, int max) {
-        return 5;
+        return Params.NETWORK_USAGE_VM_TO_VM_AVERAGE;
     }
 
     public int generateToWorld(int previous, int max) {
-        return 20;
+        return Params.NETWORK_USAGE_VM_TO_WORLD_AVERAGE;
     }
 }
