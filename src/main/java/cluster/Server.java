@@ -26,12 +26,11 @@ public class Server extends Node {
     public static int MAX_CPU = 100 * vCPUs;
 
     public double getPowerUsage(){
-        return MIN_POWER + (this.getCPU()/MAX_CPU) * (MAX_POWER - MIN_POWER);
+        return MIN_POWER + ((double) this.getCPU()/MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
-    public Server(int id, int MAX_CPU){
+    public Server(int id){
         super(id);//superidee!
-        this.MAX_CPU = MAX_CPU;
         this.vms = new ArrayList<VM>();
     }
 

@@ -1,7 +1,6 @@
 package simulation;
 
 import cluster.*;
-import graph.Edge;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
@@ -73,6 +72,9 @@ public class ClusterSimulation {
 
         // Start
         simulation.run(ticks);
+
+        //Create Graph
+        cluster.getExcelLogger().makeGraph();
     }
 
     /**

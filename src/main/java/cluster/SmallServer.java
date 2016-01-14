@@ -7,6 +7,6 @@ public class SmallServer extends Server{
     public static final int vCPUs = 12;
 
     public SmallServer(int id) {
-        super(id, 2400);//2.4 GHz
+        super(id);
     }
 }
