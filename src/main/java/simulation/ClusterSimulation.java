@@ -124,7 +124,7 @@ public class ClusterSimulation {
      * @return A Cable between the nodes.
      */
     private static Cable createCable(Node node1, Node node2) {
-        Cable cable = new Cable(node1, node2);
+        Cable cable = new Cable(node1, node2, 1000);
         node1.addEdge(cable);
         node2.addEdge(cable);
         return cable;
