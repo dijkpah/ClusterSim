@@ -1,14 +1,12 @@
 package cluster;
 
+import graph.Edge;
 import graph.Node;
 import graph.Path;
 import lombok.NonNull;
 
-import java.util.List;
+public class Connection extends Path{
 
-public class Connection extends Path {
-
-    @NonNull private List<Cable> cables;
     @NonNull private Type type;
     private int networkTraffic;
 
@@ -29,16 +27,16 @@ public class Connection extends Path {
     public void applyNetworkTraffic() {
         switch(type){
             case MIGRATION:
-                for(Cable cable : cables){
-                    cable.setMigrationBandwidth(cable.getMigrationBandwidth() + networkTraffic);
+                for(Edge cable : edges){
+                    ((Cable)cable).setMigrationBandwidth(((Cable)cable).getMigrationBandwidth() + networkTraffic);
                 }
             case INTERNAL:
-                for(Cable cable : cables){
-                    cable.setInternalCommunicationBandwidth(cable.getInternalCommunicationBandwidth() + networkTraffic);
+                for(Edge cable : edges){
+                    ((Cable)cable).setInternalCommunicationBandwidth(((Cable)cable).getInternalCommunicationBandwidth() + networkTraffic);
                 }
             case EXTERNAL:
-                for(Cable cable : cables){
-                    cable.setExternalCommunicationBandwidth(cable.getExternalCommunicationBandwidth() + networkTraffic);
+                for(Edge cable : edges){
+                    ((Cable)cable).setExternalCommunicationBandwidth(((Cable)cable).getExternalCommunicationBandwidth() + networkTraffic);
                 }
         }
     }

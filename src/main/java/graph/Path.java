@@ -11,9 +11,9 @@ import java.util.Set;
 
 @Data
 public class Path implements SimulationEntity {
-    @NonNull private List<Edge> edges;
-    @NonNull private Node firstEndPoint;
-    @NonNull private Node secondEndPoint;
+    @NonNull protected List<Edge> edges;
+    @NonNull protected Node firstEndPoint;
+    @NonNull protected Node secondEndPoint;
 
     public void tick() {
     }
@@ -26,7 +26,11 @@ public class Path implements SimulationEntity {
     }
 
     public void updateEdges(){
+
         this.edges = findShortestPath(firstEndPoint, secondEndPoint, new HashSet<Edge>());
+        if(this.edges == null){
+            throw new RuntimeException("A Path is specified, but the path could not be found");
+        }
     }
 
     /**

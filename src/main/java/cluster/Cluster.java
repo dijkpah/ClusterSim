@@ -4,6 +4,7 @@ import graph.Graph;
 import graph.Node;
 import graph.Path;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import simulation.ExcelLogger;
 import simulation.SimulationEntity;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implements SimulationEntity {
     private World world;
 
@@ -113,17 +115,6 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
             connection.applyNetworkTraffic();
         }
 
-
-
-
-        //TODO: is this necessary?
-        for (E edge : edges) {
-            edge.tick();
-        }
-        //Then update the connections that are changed
-        for (Path connection : connections) {
-            connection.tick();
-        }
         /**
          * TODO: implement
          */

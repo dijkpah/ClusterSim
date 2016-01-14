@@ -1,9 +1,11 @@
 package switches;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import simulation.SimulationEntity;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class MainSwitch extends Switch implements SimulationEntity {
 
     public static final int CAPACITY = 1000;
