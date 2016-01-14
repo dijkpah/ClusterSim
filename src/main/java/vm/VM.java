@@ -20,11 +20,7 @@ public abstract class VM implements SimulationEntity {
     @NonNull
     public final int id;
 
-    /**
-     * The number of instructions available per second (=clock time * number of cores).
-     */
-    @NonNull
-    public final int vCPUs;
+    @NonNull public final int vCPUs;
     private int networkTrafficToWorld;
     private Server server;
 
@@ -35,13 +31,11 @@ public abstract class VM implements SimulationEntity {
     /**
      * The amount of RAM, in GiB.
      */
-    @NonNull
-    private int maxRAM;
+    @NonNull private int maxRAM;
     /**
      * The maximum bandwidth of the internet connection, in Mbps.
      */
-    @NonNull
-    private int maxBandwidth;
+    @NonNull private int maxBandwidth;
 
     /**
      * The LoadGenerator used for the generation of load on this VM.

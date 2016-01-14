@@ -5,15 +5,16 @@ import graph.Edge;
 import graph.Node;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import simulation.SimulationEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class Switch extends Node implements SimulationEntity {
 
-    public static final int CAPACITY = 0;
-    public static final int BASEPOWER = 0;
-    public static final int MAXPOWER = 0;
+    @Getter public final int CAPACITY = 0;
+    @Getter public final int BASEPOWER = 0;
+    @Getter public final int MAXPOWER = 0;
 
     public Switch(int id){
         super(id);
@@ -25,11 +26,11 @@ public abstract class Switch extends Node implements SimulationEntity {
     }
 
     public int getMaxConsumption(){
-        return MAXPOWER;
+        return this.getMAXPOWER();
     }
 
     public int getBaseConsumption(){
-        return BASEPOWER;
+        return this.getBASEPOWER();
     }
 
     public int getExternalCommunicationConsumption(){
