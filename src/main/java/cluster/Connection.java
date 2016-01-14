@@ -15,7 +15,7 @@ public class Connection extends Path {
     @NonNull private Type type;
 
     public Connection(Type type, List<Edge> edges, Node firstEndPoint, Node secondEndPoint) {
-        super(edges, firstEndPoint, secondEndPoint);
+        super(firstEndPoint, secondEndPoint);
         this.type = type;
     }
 
