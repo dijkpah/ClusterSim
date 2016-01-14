@@ -59,6 +59,8 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                 Switch aSwitch = (Switch) node;
                 baseSwitchConsumption += aSwitch.getBaseConsumption();
                 externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
+                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
+                migrationNetworkConsumption+= aSwitch.getMigrationCommunicationConsumption();
             }else{
                 new Exception("unknown Node type: "+node.getClass().getName()).printStackTrace();
             }

@@ -11,6 +11,7 @@ public abstract class Switch extends Node implements SimulationEntity {
 
     public static final int CAPACITY = 0;
     public static final int BASEPOWER = 0;
+    public static final int MAXPOWER = 0;
 
     public Switch(int id){
         super(id);
@@ -21,18 +22,48 @@ public abstract class Switch extends Node implements SimulationEntity {
 
     }
 
+    public int getMaxConsumption(){
+        return MAXPOWER;
+    }
+
     public int getBaseConsumption(){
         return BASEPOWER;
     }
 
     public int getExternalCommunicationConsumption(){
-        int result = 0;
+        int cableBandwidthUsed = 0;
+        int cableCapacity = 0;
         for(Edge edge: getEdges()){
             if(edge instanceof Cable){
-
+                cableBandwidthUsed += ((Cable) edge).getExternalCommunicationBandwidth();
+                cableCapacity += ((Cable) edge).getCapacity();
             }
         }
-        return result;
+        return cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption());
+    }
+
+    public int getInternalCommunicationConsumption() {
+        int cableBandwidthUsed = 0;
+        int cableCapacity = 0;
+        for(Edge edge: getEdges()){
+            if(edge instanceof Cable){
+                cableBandwidthUsed += ((Cable) edge).getInternalCommunicationBandwidth();
+                cableCapacity += ((Cable) edge).getCapacity();
+            }
+        }
+        return cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption());
+    }
+
+    public int getMigrationCommunicationConsumption() {
+        int cableBandwidthUsed = 0;
+        int cableCapacity = 0;
+        for(Edge edge: getEdges()){
+            if(edge instanceof Cable){
+                cableBandwidthUsed += ((Cable) edge).getMigrationBandwidth();
+                cableCapacity += ((Cable) edge).getCapacity();
+            }
+        }
+        return cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption());
     }
 
     @Override
