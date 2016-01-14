@@ -8,7 +8,7 @@ import lombok.Data;
 public class Cable extends Edge {
 
     public Cable(Node node1, Node node2) {
-        super(node1, node2);
+        super(node1, node2, 0);
     }
 
     @Override

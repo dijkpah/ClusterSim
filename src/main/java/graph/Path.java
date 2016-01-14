@@ -1,7 +1,5 @@
 package graph;
 
-import graph.Edge;
-import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
 import simulation.SimulationEntity;
@@ -15,5 +13,9 @@ public class Path implements SimulationEntity {
     @NonNull private Node secondEndPoint;
 
     public void tick() {
+    }
+
+    public Path(Node firstEndPoint, Node secondEndPoint){
+        //TODO: breadth first search
     }
 }
