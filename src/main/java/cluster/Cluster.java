@@ -20,7 +20,7 @@ import java.util.Map;
 public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implements SimulationEntity {
     private World world;
 
-    private ExcelLogger excelLogger = new ExcelLogger();
+
     private List<Connection> connections = new ArrayList<Connection>();
 
     public Cluster(World world, List<N> nodes, List<E> edges) {
@@ -41,32 +41,6 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
             connections.add(result);
         }
         return result;
-    }
-
-    /**
-     * Enters power consumption summations for servers and connections
-     */
-    private void updateLog(){
-        int serverConsumption = 0;
-        int baseSwitchConsumption = 0;
-        int externalNetworkConsumption = 0;
-        int internalNetworkConsumption = 0;
-        int migrationNetworkConsumption= 0;
-
-        for(Node node : nodes){
-            if(node instanceof Server){
-                serverConsumption += ((Server) node).getPowerUsage();
-            }else if(node instanceof Switch){
-                Switch aSwitch = (Switch) node;
-                baseSwitchConsumption += aSwitch.getBaseConsumption();
-                externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
-                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
-                migrationNetworkConsumption+= aSwitch.getMigrationCommunicationConsumption();
-            }else if(!(node instanceof World)){
-                new Exception("unknown Node type: "+node.getClass().getName()).printStackTrace();
-            }
-        }
-        excelLogger.addTick(serverConsumption, baseSwitchConsumption, externalNetworkConsumption, internalNetworkConsumption, migrationNetworkConsumption);
     }
 
     public void tick() {
@@ -115,10 +89,5 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         for(Connection connection : connections){
             connection.applyNetworkTraffic();
         }
-
-        /**
-         * TODO: implement
-         */
-        updateLog();
     }
 }

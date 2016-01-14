@@ -34,6 +34,7 @@ public class ClusterSimulation {
 
     public long clock;
     private Set<Migration> currentMigrations = new HashSet<>();
+    private ExcelLogger excelLogger = new ExcelLogger();
 
     /**
      * Start the simulation
@@ -47,6 +48,8 @@ public class ClusterSimulation {
             currentMigrations.addAll(migrationPolicy.update(cluster));
             // Apply migrations
             executeMigrations();
+            // Update the log
+            updateLog();
             clock++;
         }
     }
@@ -83,6 +86,32 @@ public class ClusterSimulation {
         }
     }
 
+    /**
+     * Enters power consumption summations for servers and connections
+     */
+    private void updateLog(){
+        int serverConsumption = 0;
+        int baseSwitchConsumption = 0;
+        int externalNetworkConsumption = 0;
+        int internalNetworkConsumption = 0;
+        int migrationNetworkConsumption= 0;
+
+        for(Node node : cluster.getNodes()){
+            if(node instanceof Server){
+                serverConsumption += ((Server) node).getPowerUsage();
+            }else if(node instanceof Switch){
+                Switch aSwitch = (Switch) node;
+                baseSwitchConsumption += aSwitch.getBaseConsumption();
+                externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
+                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
+                migrationNetworkConsumption+= aSwitch.getMigrationCommunicationConsumption();
+            }else if(!(node instanceof World)){
+                new Exception("unknown Node type: "+node.getClass().getName()).printStackTrace();
+            }
+        }
+        excelLogger.addTick(serverConsumption, baseSwitchConsumption, externalNetworkConsumption, internalNetworkConsumption, migrationNetworkConsumption);
+    }
+
     public static void main(String[] args) {
         // Build the cluster
         Cluster<Node, Cable> cluster = simpleCluster();
@@ -99,7 +128,7 @@ public class ClusterSimulation {
         simulation.run(ticks);
 
         //Create Graph
-        cluster.getExcelLogger().makeGraph();
+        simulation.getExcelLogger().makeGraph();
     }
 
     /**
