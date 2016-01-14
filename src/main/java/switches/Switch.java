@@ -35,4 +35,9 @@ public abstract class Switch extends Node implements SimulationEntity {
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Switch(id=" + id + ")";
+    }
+
 }

@@ -41,6 +41,7 @@ public class Server extends Node {
      */
     public void addVM(VM vm){
         this.vms.add(vm);
+        vm.setServer(this);
     }
 
     /**

@@ -3,9 +3,11 @@ package cluster;
 import graph.Edge;
 import graph.Node;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Cable extends Edge {
 
     private int externalCommunicationBandwidth = 0;

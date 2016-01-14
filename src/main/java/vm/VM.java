@@ -1,5 +1,6 @@
 package vm;
 
+import cluster.Server;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -12,8 +13,8 @@ import java.util.Map;
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
 @Data
-@ToString(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs"})
-@EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs"})
+@ToString(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
+@EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
 public abstract class VM implements SimulationEntity {
 
     @NonNull
@@ -25,6 +26,7 @@ public abstract class VM implements SimulationEntity {
     @NonNull
     public final int vCPUs;
     private int networkTrafficToWorld;
+    private Server server;
 
     public int MAX_CPU() {
         return this.vCPUs * 100;

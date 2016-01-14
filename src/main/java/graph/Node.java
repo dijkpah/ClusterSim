@@ -1,6 +1,7 @@
 package graph;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import simulation.SimulationEntity;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @ToString(exclude="edges")
+@EqualsAndHashCode(exclude = "edges")
 public abstract class Node implements SimulationEntity {
 
     @NonNull public final int id;

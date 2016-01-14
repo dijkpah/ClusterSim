@@ -1,25 +1,30 @@
 package cluster;
 
-import graph.Edge;
 import graph.Graph;
 import graph.Node;
 import graph.Path;
 import lombok.Data;
+import lombok.ToString;
 import simulation.ExcelLogger;
 import simulation.SimulationEntity;
 import switches.Switch;
+import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
-public class Cluster<N extends Node, E extends Edge> extends Graph<N, E> implements SimulationEntity {
+@ToString(callSuper = true)
+public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implements SimulationEntity {
+    private World world;
 
     private ExcelLogger excelLogger = new ExcelLogger();
     private List<Connection> connections = new ArrayList<Connection>();
 
-    public Cluster(List<N> nodes, List<E> edges) {
+    public Cluster(World world, List<N> nodes, List<E> edges) {
         super(nodes, edges);
+        this.world = world;
     }
 
     public Connection getConnection(Connection.Type type, Node node1, Node node2) {
@@ -66,12 +71,47 @@ public class Cluster<N extends Node, E extends Edge> extends Graph<N, E> impleme
         for (N node : nodes) {
             // Update load and network traffic
             node.tick();
-            // Update connections
+
         }
 
-        /*for (N node : nodes) {
+        // Reset connection status
+        for(Connection connection : connections){
+            connection.setNetworkTraffic(0);
+        }
+        for(Cable cable : edges){
+            cable.setExternalCommunicationBandwidth(0);
+            cable.setInternalCommunicationBandwidth(0);
+            cable.setMigrationBandwidth(0);
+        }
 
-        }*/
+        // Update connections
+        for (N node : nodes) {
+            Connection connection;
+            if(node instanceof Server){
+                Server server = (Server) node;
+                for(VM vm : server.getVms()){
+                    // Connection to the world
+                    connection = this.getConnection(Connection.Type.EXTERNAL, server, this.getWorld());
+                    if(connection==null){
+                        System.err.println("WHAAAAAAAAAAA");
+                    }
+                    connection.addNetworkTraffic(vm.getNetworkTrafficToWorld());
+
+                    // Connections between VMs
+                    for (Map.Entry<VM, Integer> other : vm.getConnectedVMs().entrySet()){
+                        connection = this.getConnection(Connection.Type.INTERNAL, server, other.getKey().getServer());
+                        if(connection==null){
+                            System.err.println("WHAAAAAAAAAAA");
+                        }
+                        connection.addNetworkTraffic(other.getValue());
+                    }
+                }
+            }
+        }
+
+        for(Connection connection : connections){
+            connection.applyNetworkTraffic();
+        }
 
 
 
