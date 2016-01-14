@@ -1,6 +1,5 @@
 package cluster;
 
-import graph.Edge;
 import graph.Node;
 import graph.Path;
 import lombok.NonNull;
@@ -14,8 +13,8 @@ public class Connection extends Path {
     @NonNull private Node secondEndPoint;
     @NonNull private Type type;
 
-    public Connection(Type type, List<Edge> edges, Node firstEndPoint, Node secondEndPoint) {
-        super(edges, firstEndPoint, secondEndPoint);
+    public Connection(Type type, Node firstEndPoint, Node secondEndPoint) {
+        super(firstEndPoint, secondEndPoint);
         this.type = type;
     }
 

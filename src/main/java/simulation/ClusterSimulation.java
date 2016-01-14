@@ -103,15 +103,26 @@ public class ClusterSimulation {
         nodes.add(server2);
 
         // Create edges
-        edges.add(createConnection(server1, switch1));
-        edges.add(createConnection(server2, switch1));
-        edges.add(createConnection(switch1, world));
+        edges.add(createCable(server1, switch1));
+        edges.add(createCable(server2, switch1));
+        edges.add(createCable(switch1, world));
+
+        // Setup connection
+        new Connection(Connection.Type.EXTERNAL, server1, world);
+        new Connection(Connection.Type.EXTERNAL, server2, world);
+        new Connection(Connection.Type.INTERNAL, server1, server2);
 
         // Return the graph
         return new Graph<Node, Edge>(nodes, edges);
     }
 
-    private static Cable createConnection(Node node1, Node node2) {
+    /**
+     * Create a new cable between the two nodes.
+     * @param node1 The first node.
+     * @param node2 The second node.
+     * @return A Cable between the nodes.
+     */
+    private static Cable createCable(Node node1, Node node2) {
         Cable cable = new Cable(node1, node2);
         node1.addEdge(cable);
         node2.addEdge(cable);

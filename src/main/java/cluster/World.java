@@ -13,5 +13,8 @@ public class World extends Node {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "World(id=" + id + ")";
+    }
 }
