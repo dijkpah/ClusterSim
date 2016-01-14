@@ -17,4 +17,12 @@ public class Params {
      * The duration of a tick in seconds.
      */
     public static final int TICK_DURATION = 15;
+    /**
+     * The average network traffic in Mb/s between a VM and the world.
+     */
+    public static final int NETWORK_USAGE_VM_TO_WORLD_AVERAGE = 100;
+    /**
+     * The average network traffic in Mb/s between connected VMs.
+     */
+    public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 50;
 }
