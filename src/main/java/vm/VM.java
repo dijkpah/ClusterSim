@@ -23,14 +23,12 @@ public abstract class VM implements SimulationEntity {
     /**
      * The number of instructions available per second (=clock time * number of cores).
      */
-    @NonNull
-    public final int vCPUs;
+    @NonNull public final int vCPUs;
 
     /**
      * The number of Mbs to be transferred when migrating.
      */
-    @NonNull
-    public final int size;
+    @NonNull public final int size;
 
     private int networkTrafficToWorld;
     private Server server;
@@ -42,13 +40,11 @@ public abstract class VM implements SimulationEntity {
     /**
      * The amount of RAM, in GiB.
      */
-    @NonNull
-    private int maxRAM;
+    @NonNull private int maxRAM;
     /**
      * The maximum bandwidth of the internet connection, in Mbps.
      */
-    @NonNull
-    private int maxBandwidth;
+    @NonNull private int maxBandwidth;
 
     @NonNull private State state;
 
