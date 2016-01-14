@@ -20,7 +20,16 @@ public abstract class VM implements SimulationEntity {
     @NonNull
     public final int id;
 
+    /**
+     * The number of instructions available per second (=clock time * number of cores).
+     */
     @NonNull public final int vCPUs;
+
+    /**
+     * The number of Mbs to be transferred when migrating.
+     */
+    @NonNull public final int size;
+
     private int networkTrafficToWorld;
     private Server server;
 
@@ -36,6 +45,8 @@ public abstract class VM implements SimulationEntity {
      * The maximum bandwidth of the internet connection, in Mbps.
      */
     @NonNull private int maxBandwidth;
+
+    @NonNull private State state;
 
     /**
      * The LoadGenerator used for the generation of load on this VM.
@@ -55,12 +66,14 @@ public abstract class VM implements SimulationEntity {
     /**
      * @invariant 0 <= CPU <= MAX_CPU()
      **/
-    public VM(int id, int vCPUs, int maxRAM, int maxBandwidth) {
+    public VM(int id, int vCPUs, int maxRAM, int maxBandwidth, int size) {
         this.id = id;
         this.vCPUs = vCPUs;
         this.maxRAM = maxRAM;
         this.maxBandwidth = maxBandwidth;
+        this.size = size;
         this.CPU = (int) (Params.INITIAL_VM_CPU_USAGE * this.MAX_CPU());
+        this.state = State.RUNNING;
         this.loadGenerator = new NormalLoadGenerator();
         this.networkTrafficGenerator = new SimpleNetworkTrafficGenerator();
         this.connectedVMs = new HashMap<VM, Integer>();
