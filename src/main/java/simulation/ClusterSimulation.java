@@ -107,10 +107,14 @@ public class ClusterSimulation {
         edges.add(createCable(server2, switch1));
         edges.add(createCable(switch1, world));
 
+        // Vms are linked
+        vm1.connectToVM(vm2);
+        vm2.connectToVM(vm1);
+
         // Setup connection
-        new Connection(Connection.Type.EXTERNAL, server1, world);
+        /*new Connection(Connection.Type.EXTERNAL, server1, world);
         new Connection(Connection.Type.EXTERNAL, server2, world);
-        new Connection(Connection.Type.INTERNAL, server1, server2);
+        new Connection(Connection.Type.INTERNAL, server1, server2);*/
 
         // Return the graph
         return new Graph<Node, Edge>(nodes, edges);

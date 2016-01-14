@@ -12,16 +12,6 @@ public class NormalLoadGenerator implements LoadGenerator {
 
     /**
      *
-     * @param previous param of previous value, with value between 0.0 and 1.0
-     * @return new value, also between 0.0 and 1.0
-     */
-    public double generate(double previous) {
-        double sample = distribution.sample();
-        return Math.max(0, Math.min(1, previous + sample));
-    }
-
-    /**
-     *
      * @param previous previous value from which we want to deviate
      * @param min minimal value
      * @param max maximal value

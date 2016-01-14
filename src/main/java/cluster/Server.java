@@ -83,6 +83,7 @@ public class Server extends Node {
         for(VM vm : vms){
             vm.tick();
         }
+        
         //TODO: tag new VMs for migrations
         //TODO: update machine state if going to sleep or woken up
         //TODO: reserve room for VMs on physical machines
