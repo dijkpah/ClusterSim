@@ -10,6 +10,7 @@ import migration.NoMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
 import vm.M4LargeVM;
+import vm.M4XLargeVM;
 import vm.VM;
 
 import java.util.ArrayList;
@@ -149,11 +150,17 @@ public class ClusterSimulation {
 
         // Create VMs
         VM vm1 = new M4LargeVM(1);
-        VM vm2 = new M4LargeVM(2);
+        VM vm2 = new M4XLargeVM(2);
+        VM vm3 = new M4XLargeVM(3);
+        VM vm4 = new M4XLargeVM(4);
+        VM vm5 = new M4XLargeVM(5);
 
         // Add VMs to server
         server1.addVM(vm1);
         server2.addVM(vm2);
+        server2.addVM(vm3);
+        server2.addVM(vm4);
+        server2.addVM(vm5);
 
         // Add nodes
         nodes.add(world);
