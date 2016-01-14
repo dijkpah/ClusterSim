@@ -1,7 +1,6 @@
 package simulation;
 
 import cluster.*;
-import graph.Edge;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
@@ -98,6 +97,9 @@ public class ClusterSimulation {
 
         // Start
         simulation.run(ticks);
+
+        //Create Graph
+        cluster.getExcelLogger().makeGraph();
     }
 
     /**
@@ -113,8 +115,8 @@ public class ClusterSimulation {
         Switch switch1 = new MainSwitch(1);
 
         // Create servers
-        Server server1 = new SmallServer(1);
-        Server server2 = new SmallServer(2);
+        Server server1 = new Server(1);
+        Server server2 = new Server(2);
 
         // Create VMs
         VM vm1 = new M4LargeVM(1);

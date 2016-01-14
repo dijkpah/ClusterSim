@@ -39,20 +39,35 @@ public class ExcelLogger {
             e.printStackTrace();
         }
 
-        //Add headers
-        writer.println("Servers"+SEPARATOR);
-        writer.println("Switch Base"+SEPARATOR);
-        writer.println("External Traffic"+SEPARATOR);
-        writer.println("Internal Traffic"+SEPARATOR);
-        writer.println("Migrations"+SEPARATOR);
 
-        //Add ticks
+        writer.print("Servers" + SEPARATOR);
         for(int i=0;i<ticks;i++){
-            writer.println(serverConsumption.get(i)+SEPARATOR);
-            writer.println(baseSwitchConsumption.get(i)+SEPARATOR);
-            writer.println(externalNetworkConsumption.get(i)+SEPARATOR);
-            writer.println(internalNetworkConsumption.get(i)+SEPARATOR);
-            writer.println(migrationNetworkConsumption.get(i)+SEPARATOR);
+            writer.print(serverConsumption.get(i) + SEPARATOR);
+        }
+        writer.println("");
+
+
+        writer.print("Switch Base"+SEPARATOR);
+        for(int i=0;i<ticks;i++) {
+            writer.print(baseSwitchConsumption.get(i) + SEPARATOR);
+        }
+        writer.println("");
+
+        writer.print("External Traffic"+SEPARATOR);
+        for(int i=0;i<ticks;i++) {
+            writer.print(externalNetworkConsumption.get(i)+SEPARATOR);
+        }
+        writer.println("");
+
+        writer.print("Internal Traffic"+SEPARATOR);
+        for(int i=0;i<ticks;i++) {
+            writer.print(internalNetworkConsumption.get(i) + SEPARATOR);
+        }
+        writer.println("");
+
+        writer.print("Migrations"+SEPARATOR);
+        for(int i=0;i<ticks;i++) {
+            writer.print(migrationNetworkConsumption.get(i) + SEPARATOR);
         }
         writer.close();
     }
