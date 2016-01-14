@@ -7,7 +7,7 @@ public class NormalLoadGenerator implements LoadGenerator {
     private NormalDistribution distribution;
 
     public NormalLoadGenerator(){
-        distribution = new NormalDistribution(0, Params.FLUCTUATION_DEVIATION);
+        distribution = new NormalDistribution(0, Params.CPU_LOAD_FLUCTUATION_DEVIATION);
     }
 
     /**
@@ -18,7 +18,7 @@ public class NormalLoadGenerator implements LoadGenerator {
      * @return new value between min and max with a small deviation from previous
      */
     public double generate(double previous, double min, double max) {
-        double sample = distribution.sample();                               //sample with mean 0 and deviation Params.FLUCTUATION_DEVIATION
+        double sample = distribution.sample();                               //sample with mean 0 and deviation Params.CPU_LOAD_FLUCTUATION_DEVIATION
         double diff = (sample * (max - min) + min);                          //we need to 'spread out' the sample over our range
         double truncated = Math.max(min, Math.min(max, previous+diff));      //now we just need to make sure the value does not go out of bounds
         return truncated;
