@@ -2,6 +2,7 @@ package vm;
 
 import graph.Path;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
 import simulation.*;
@@ -14,7 +15,8 @@ import java.util.Map;
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
 @Data
-@ToString(exclude = {"paths", "loadGenerator"})
+@ToString(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs"})
+@EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs"})
 public abstract class VM implements SimulationEntity {
 
     @NonNull
@@ -66,7 +68,7 @@ public abstract class VM implements SimulationEntity {
         this.maxBandwidth = maxBandwidth;
         this.CPU = (int) (Params.INITIAL_VM_CPU_USAGE * this.MAX_CPU());
         this.loadGenerator = new NormalLoadGenerator();
-        this.loadGenerator = new SimpleNetworkTrafficGenerator();
+        this.networkTrafficGenerator = new SimpleNetworkTrafficGenerator();
         this.connectedVMs = new HashMap<VM, Integer>();
     }
 
@@ -79,7 +81,7 @@ public abstract class VM implements SimulationEntity {
 
     private void fluctuateNetworkTraffic() {
         for(Map.Entry<VM, Integer> entry : connectedVMs.entrySet()){
-            connectedVMs.put(entry.getKey(), this.networkTrafficGenerator.generate(entry.getValue(), entry.getKey().getMaxBandwidth()));
+            entry.setValue(this.networkTrafficGenerator.generate(entry.getValue(), entry.getKey().getMaxBandwidth()));
         }
     }
 

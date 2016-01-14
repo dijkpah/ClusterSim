@@ -3,8 +3,8 @@ package simulation;
 /**
  * Simple network generator which generates a fixed network traffic.
  */
-public class SimpleNetworkTrafficGenerator implements LoadGenerator {
-    public double generate(double previous, double min, double max) {
+public class SimpleNetworkTrafficGenerator implements NetworkTrafficGenerator {
+    public int generate(int previous, int max) {
         return 10;
     }
 }
