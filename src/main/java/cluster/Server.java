@@ -19,7 +19,10 @@ public class Server extends Node {
     public static final int MAX_POWER = 300;
     public static final int MIN_POWER = 200;
     /** Amount of hyperthreads*/
-    public static final int vCPUs = 1;
+
+    //Intel Xeon E5-2676 v3 has 12 cores and 24 hyperthreads
+    //Source: http://www.cpu-world.com/CPUs/Xeon/Intel-Xeon%20E5-2676%20v3.html
+    public static final int vCPUs = 12;
     private List<VM> vms;
 
     /**Maximum possible CPU load in percent (100% per core * cores)*/

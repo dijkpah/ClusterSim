@@ -90,8 +90,8 @@ public class ClusterSimulation {
         Switch switch1 = new MainSwitch(1);
 
         // Create servers
-        Server server1 = new SmallServer(1);
-        Server server2 = new SmallServer(2);
+        Server server1 = new Server(1);
+        Server server2 = new Server(2);
 
         // Create VMs
         VM vm1 = new M4LargeVM(1);
