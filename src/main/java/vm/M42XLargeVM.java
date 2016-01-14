@@ -10,4 +10,11 @@ public class M42XLargeVM extends VM {
     public M42XLargeVM(int id){
         super(id, vCPUs, maxRAM, maxBandwidth, size);
     }
+
+    @Override
+    public VM createReservedSpace() {
+        VM result = new M42XLargeVM(-id);
+        result.setState(State.RESERVED);
+        return result;
+    }
 }

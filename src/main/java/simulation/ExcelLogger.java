@@ -16,7 +16,7 @@ public class ExcelLogger {
     private List<Integer> internalNetworkConsumption = new ArrayList<Integer>();
     private List<Integer> migrationNetworkConsumption = new ArrayList<Integer>();
     private List<Integer> baseSwitchConsumption = new ArrayList<Integer>();
-    private static final String SEPARATOR = ";";
+    private static final String SEPARATOR = "\t";
 
     public void addTick(int server, int switchBase, int external, int internal, int migration){
         this.serverConsumption.add(server);
@@ -32,7 +32,7 @@ public class ExcelLogger {
         //Create file
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter("simulation.csv", "UTF-8");
+            writer = new PrintWriter("simulation.tsv", "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {

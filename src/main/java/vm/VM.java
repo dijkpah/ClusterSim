@@ -113,6 +113,7 @@ public abstract class VM implements SimulationEntity {
         //TODO
     }
 
+    public abstract VM createReservedSpace();
 
     public enum State {
         RUNNING,

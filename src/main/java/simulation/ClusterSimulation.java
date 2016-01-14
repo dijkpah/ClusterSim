@@ -7,6 +7,7 @@ import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
 import migration.NoMigrationPolicy;
+import migration.RandomMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
 import vm.M4LargeVM;
@@ -26,12 +27,14 @@ public class ClusterSimulation {
     /**
      * The cluster this simulation runs on.
      */
-    @NonNull private Cluster<Node, Cable> cluster;
+    @NonNull
+    private Cluster<Node, Cable> cluster;
 
     /**
      * The MigrationPolicy to use in this simulation.
      */
-    @NonNull private MigrationPolicy migrationPolicy;
+    @NonNull
+    private MigrationPolicy migrationPolicy;
 
     public long clock;
     private Set<Migration> currentMigrations = new HashSet<>();
@@ -43,6 +46,7 @@ public class ClusterSimulation {
     public void run(int ticks) {
         clock = 0;
         while (clock < ticks) {
+            System.out.println("== TICK " + clock + " ==");
             // Update load and network traffic
             cluster.tick();
             // Determine migrations
@@ -56,7 +60,7 @@ public class ClusterSimulation {
     }
 
     private void executeMigrations() {
-        for(Migration migration : currentMigrations){
+        for (Migration migration : currentMigrations) {
             executeMigration(migration);
         }
 
@@ -69,6 +73,8 @@ public class ClusterSimulation {
         migration.getVm().setState(VM.State.MIGRATING);
         migration.getTargetVM().setState(VM.State.RESERVED);
 
+        System.out.println(migration);
+
         // Get the connection
         Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
         // Determine remaining bandwidth
@@ -79,7 +85,7 @@ public class ClusterSimulation {
         migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 
         // If all data is transfered, the migration is completed
-        if(migration.getTransferredData() >= migration.getVm().getSize()){
+        if (migration.getTransferredData() >= migration.getVm().getSize()) {
             migration.getFrom().removeVM(migration.getVm());
             migration.getTo().removeVM(migration.getTargetVM());
             migration.getTo().addVM(migration.getVm());
@@ -90,47 +96,29 @@ public class ClusterSimulation {
     /**
      * Enters power consumption summations for servers and connections
      */
-    private void updateLog(){
+    private void updateLog() {
         int serverConsumption = 0;
         int baseSwitchConsumption = 0;
         int externalNetworkConsumption = 0;
         int internalNetworkConsumption = 0;
-        int migrationNetworkConsumption= 0;
+        int migrationNetworkConsumption = 0;
 
-        for(Node node : cluster.getNodes()){
-            if(node instanceof Server){
+        for (Node node : cluster.getNodes()) {
+            if (node instanceof Server) {
                 serverConsumption += ((Server) node).getPowerUsage();
-            }else if(node instanceof Switch){
+            } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
                 baseSwitchConsumption += aSwitch.getBaseConsumption();
                 externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
                 internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
-                migrationNetworkConsumption+= aSwitch.getMigrationCommunicationConsumption();
-            }else if(!(node instanceof World)){
-                new Exception("unknown Node type: "+node.getClass().getName()).printStackTrace();
+                migrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
+            } else if (!(node instanceof World)) {
+                new Exception("unknown Node type: " + node.getClass().getName()).printStackTrace();
             }
         }
         excelLogger.addTick(serverConsumption, baseSwitchConsumption, externalNetworkConsumption, internalNetworkConsumption, migrationNetworkConsumption);
     }
 
-    public static void main(String[] args) {
-        // Build the cluster
-        Cluster<Node, Cable> cluster = simpleCluster();
-
-        System.out.println(cluster);
-
-        // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(cluster, new NoMigrationPolicy());
-
-        //Set time
-        int ticks = 15;
-
-        // Start
-        simulation.run(ticks);
-
-        //Create Graph
-        simulation.getExcelLogger().makeGraph();
-    }
 
     /**
      * Creates a simple cluster with one switch, two servers and one VM on both server.
@@ -183,6 +171,7 @@ public class ClusterSimulation {
 
     /**
      * Create a new cable between the two nodes.
+     *
      * @param node1 The first node.
      * @param node2 The second node.
      * @return A Cable between the nodes.
@@ -192,5 +181,24 @@ public class ClusterSimulation {
         node1.addEdge(cable);
         node2.addEdge(cable);
         return cable;
+    }
+
+    public static void main(String[] args) {
+        // Build the cluster
+        Cluster<Node, Cable> cluster = simpleCluster();
+
+        System.out.println(cluster);
+
+        // Create the simulation
+        ClusterSimulation simulation = new ClusterSimulation(cluster, new NoMigrationPolicy(0.3));
+
+        //Set time
+        int ticks = 15;
+
+        // Start
+        simulation.run(ticks);
+
+        //Create Graph
+        simulation.getExcelLogger().makeGraph();
     }
 }
