@@ -12,7 +12,7 @@ public class Connection extends Path {
     @NonNull private Node firstEndPoint;
     @NonNull private Node secondEndPoint;
     @NonNull private Type type;
-
+    
     public Connection(Type type, Node firstEndPoint, Node secondEndPoint) {
         super(firstEndPoint, secondEndPoint);
         this.type = type;
