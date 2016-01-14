@@ -72,10 +72,16 @@ public abstract class VM implements SimulationEntity {
 
     private int CPU;
 
+    /**
+     * Fluctuate the load on this VM.
+     */
     private void fluctuateLoad() {
         this.CPU = (int) loadGenerator.generate(this.CPU, 0, this.MAX_CPU());
     }
 
+    /**
+     * Fluctuate the network traffic on this VM, both to the world and to connected VMs.
+     */
     private void fluctuateNetworkTraffic() {
         for(Map.Entry<VM, Integer> entry : connectedVMs.entrySet()){
             entry.setValue(this.networkTrafficGenerator.generateBetweenVM(entry.getValue(), this.getMaxBandwidth()));
@@ -83,6 +89,10 @@ public abstract class VM implements SimulationEntity {
         this.networkTrafficToWorld = this.networkTrafficGenerator.generateToWorld(this.networkTrafficToWorld, this.getMaxBandwidth());
     }
 
+    /**
+     * Connect this VM to another VM.
+     * @param other The VM to connect to.
+     */
     public void connectToVM(VM other) {
         this.connectedVMs.put(other, 0);
     }
@@ -94,10 +104,10 @@ public abstract class VM implements SimulationEntity {
         //TODO
     }
 
+
     public enum State {
         RUNNING,
         MIGRATING,
         RESERVED
     }
-
 }

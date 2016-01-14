@@ -21,9 +21,9 @@ import java.util.List;
 @Data
 public class ClusterSimulation {
     /**
-     * The graph this simulation runs on.
+     * The cluster this simulation runs on.
      */
-    @NonNull private Graph<Node, Edge> graph;
+    @NonNull private Cluster<Node, Edge> cluster;
 
     /**
      * The MigrationPolicy to use in this simulation.
@@ -38,8 +38,10 @@ public class ClusterSimulation {
     public void run(int ticks) {
         clock = 0;
         while (clock < ticks) {
-            graph.tick();
-            List<Migration> migrations = migrationPolicy.update(graph);
+            // Update load and network traffic
+            cluster.tick();
+            // Determine migrations
+            List<Migration> migrations = migrationPolicy.update(cluster);
             executeMigrations(migrations);
             clock++;
         }
@@ -53,17 +55,17 @@ public class ClusterSimulation {
     }
 
     private void executeMigration(Migration migration) {
-        //Path path = graph.getPath(migration);
+        //Path path = cluster.getPath(migration);
     }
 
     public static void main(String[] args) {
-        // Build the graph
-        Graph<Node, Edge> graph = simpleCluster();
+        // Build the cluster
+        Cluster<Node, Edge> cluster = simpleCluster();
 
-        System.out.println(graph);
+        System.out.println(cluster);
 
         // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(graph, new NoMigrationPolicy());
+        ClusterSimulation simulation = new ClusterSimulation(cluster, new NoMigrationPolicy());
 
         //Set time
         int ticks = 15;
@@ -75,7 +77,7 @@ public class ClusterSimulation {
     /**
      * Creates a simple cluster with one switch, two servers and one VM on both server.
      */
-    public static Graph<Node, Edge> simpleCluster() {
+    public static Cluster<Node, Edge> simpleCluster() {
         List<Node> nodes = new ArrayList<Node>();
         List<Edge> edges = new ArrayList<Edge>();
 
@@ -112,12 +114,12 @@ public class ClusterSimulation {
         vm2.connectToVM(vm1);
 
         // Setup connection
-        /*new Connection(Connection.Type.EXTERNAL, server1, world);
-        new Connection(Connection.Type.EXTERNAL, server2, world);
-        new Connection(Connection.Type.INTERNAL, server1, server2);*/
+        new Connection(Connection.Type.EXTERNAL, server1, world);
+        //new Connection(Connection.Type.EXTERNAL, server2, world);
+        //new Connection(Connection.Type.INTERNAL, server1, server2);
 
-        // Return the graph
-        return new Graph<Node, Edge>(nodes, edges);
+        // Return the cluster
+        return new Cluster<Node, Edge>(nodes, edges);
     }
 
     /**
