@@ -20,6 +20,10 @@ public class Path implements SimulationEntity {
         this.firstEndPoint = firstEndPoint;
         this.secondEndPoint = secondEndPoint;
 
+        this.updateEdges();
+    }
+
+    public void updateEdges(){
         this.edges = findShortestPath(firstEndPoint, secondEndPoint);
     }
 
