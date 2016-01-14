@@ -3,8 +3,11 @@ package cluster;
 import graph.Edge;
 import graph.Node;
 import graph.Path;
+import lombok.Data;
 import lombok.NonNull;
+import simulation.Params;
 
+@Data
 public class Connection extends Path{
 
     @NonNull private Type type;
@@ -14,10 +17,6 @@ public class Connection extends Path{
         super(firstEndPoint, secondEndPoint);
         this.type = type;
         this.networkTraffic = 0;
-    }
-
-    public void setNetworkTraffic(int networkTraffic) {
-        this.networkTraffic = networkTraffic;
     }
 
     public void addNetworkTraffic(int additionalNetworkTraffic) {
@@ -39,6 +38,11 @@ public class Connection extends Path{
                     ((Cable)cable).setExternalCommunicationBandwidth(((Cable)cable).getExternalCommunicationBandwidth() + networkTraffic);
                 }
         }
+    }
+
+    public int getBandwidth() {
+        // For now this is simple, but if there are different speeds possible this should be changed.
+        return Params.CABLE_CAPACITY;
     }
 
     public enum Type{

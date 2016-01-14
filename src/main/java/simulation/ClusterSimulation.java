@@ -14,7 +14,9 @@ import vm.M4LargeVM;
 import vm.VM;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A simulation of a cluster
@@ -32,6 +34,7 @@ public class ClusterSimulation {
     @NonNull private MigrationPolicy migrationPolicy;
 
     public long clock;
+    private Set<Migration> currentMigrations = new HashSet<>();
 
     /**
      * Start the simulation
@@ -42,21 +45,43 @@ public class ClusterSimulation {
             // Update load and network traffic
             cluster.tick();
             // Determine migrations
-            List<Migration> migrations = migrationPolicy.update(cluster);
-            executeMigrations(migrations);
+            currentMigrations.addAll(migrationPolicy.update(cluster));
+            // Apply migrations
+            executeMigrations();
             clock++;
         }
     }
 
-    private void executeMigrations(List<Migration> migrations) {
-        for(Migration migration : migrations){
+    private void executeMigrations() {
+        for(Migration migration : currentMigrations){
             executeMigration(migration);
         }
 
+        // Remove finished migrations
+        currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
     }
 
     private void executeMigration(Migration migration) {
-        //Path path = cluster.getPath(migration);
+        // Update the state of the VMs
+        migration.getVm().setState(VM.State.MIGRATING);
+        migration.getTargetVM().setState(VM.State.RESERVED);
+
+        // Get the connection
+        Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
+        // Determine remaining bandwidth
+        int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
+        // Use all remaining bandwidth
+        connection.addNetworkTraffic(bandwidth);
+        // Determine transferred bytes
+        migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
+
+        // If all data is transfered, the migration is completed
+        if(migration.getTransferredData() >= migration.getVm().getSize()){
+            migration.getFrom().removeVM(migration.getVm());
+            migration.getTo().removeVM(migration.getTargetVM());
+            migration.getTo().addVM(migration.getVm());
+            migration.getVm().setState(VM.State.RUNNING);
+        }
     }
 
     public static void main(String[] args) {
