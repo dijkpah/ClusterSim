@@ -2,7 +2,6 @@ package cluster;
 
 import graph.Graph;
 import graph.Node;
-import graph.Path;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -63,7 +62,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                 externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
                 internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
                 migrationNetworkConsumption+= aSwitch.getMigrationCommunicationConsumption();
-            }else{
+            }else if(!(node instanceof World)){
                 new Exception("unknown Node type: "+node.getClass().getName()).printStackTrace();
             }
         }
