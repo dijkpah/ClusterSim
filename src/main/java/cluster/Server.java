@@ -89,7 +89,7 @@ public class Server extends Node {
     }
 
     public boolean hasSLAViolation(){
-        return getCPU() >= getAssignedCPU();
+        return getCPU() >= MAX_CPU;
     }
 
 
