@@ -1,5 +1,7 @@
 package migration;
 
+import cluster.Cable;
+import cluster.Cluster;
 import cluster.Server;
 import graph.Edge;
 import graph.Graph;
@@ -13,11 +15,11 @@ import java.util.List;
  * Migration policy which does not do migrations
  */
 public class NoMigrationPolicy implements MigrationPolicy{
-    public List<Migration> update(Graph<Node, Edge> graph) {
+    public List<Migration> update(Cluster<Node, Cable> cluster) {
         return new ArrayList<Migration>();
     }
 
-    public Server allocateVM(VM vm, Graph<Node, Edge> graph) {
+    public Server allocateVM(VM vm, Cluster<Node, Cable> cluster) {
         return null;
     }
 }

@@ -23,7 +23,7 @@ public class ClusterSimulation {
     /**
      * The cluster this simulation runs on.
      */
-    @NonNull private Cluster<Node, Edge> cluster;
+    @NonNull private Cluster<Node, Cable> cluster;
 
     /**
      * The MigrationPolicy to use in this simulation.
@@ -60,7 +60,7 @@ public class ClusterSimulation {
 
     public static void main(String[] args) {
         // Build the cluster
-        Cluster<Node, Edge> cluster = simpleCluster();
+        Cluster<Node, Cable> cluster = simpleCluster();
 
         System.out.println(cluster);
 
@@ -77,9 +77,9 @@ public class ClusterSimulation {
     /**
      * Creates a simple cluster with one switch, two servers and one VM on both server.
      */
-    public static Cluster<Node, Edge> simpleCluster() {
+    public static Cluster<Node, Cable> simpleCluster() {
         List<Node> nodes = new ArrayList<Node>();
-        List<Edge> edges = new ArrayList<Edge>();
+        List<Cable> edges = new ArrayList<Cable>();
 
         // Create world
         World world = new World(0);
@@ -113,13 +113,8 @@ public class ClusterSimulation {
         vm1.connectToVM(vm2);
         vm2.connectToVM(vm1);
 
-        // Setup connection
-        new Connection(Connection.Type.EXTERNAL, server1, world);
-        //new Connection(Connection.Type.EXTERNAL, server2, world);
-        //new Connection(Connection.Type.INTERNAL, server1, server2);
-
         // Return the cluster
-        return new Cluster<Node, Edge>(nodes, edges);
+        return new Cluster<Node, Cable>(world, nodes, edges);
     }
 
     /**

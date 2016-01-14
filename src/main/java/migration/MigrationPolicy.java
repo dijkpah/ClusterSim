@@ -1,5 +1,7 @@
 package migration;
 
+import cluster.Cable;
+import cluster.Cluster;
 import cluster.Server;
 import graph.Edge;
 import graph.Graph;
@@ -10,8 +12,8 @@ import java.util.List;
 
 public interface MigrationPolicy {
 
-    List<Migration> update(Graph<Node, Edge> graph);
+    List<Migration> update(Cluster<Node, Cable> cluster);
 
-    Server allocateVM(VM vm, Graph<Node, Edge> graph);
+    Server allocateVM(VM vm, Cluster<Node, Cable> cluster);
 
 }

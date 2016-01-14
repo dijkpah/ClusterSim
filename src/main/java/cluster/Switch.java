@@ -15,4 +15,9 @@ public class Switch extends Node implements SimulationEntity {
     public void tick() {
 
     }
+
+    @Override
+    public String toString() {
+        return "Switch(id=" + id + ")";
+    }
 }
