@@ -54,6 +54,11 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         for(Connection connection : connections){
             connection.setNetworkTraffic(0);
         }
+        for(Cable cable : edges){
+            cable.setExternalCommunicationBandwidth(0);
+            cable.setInternalCommunicationBandwidth(0);
+            cable.setMigrationBandwidth(0);
+        }
 
         // Update connections
         for (N node : nodes) {
