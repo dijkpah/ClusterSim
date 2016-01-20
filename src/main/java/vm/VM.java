@@ -109,7 +109,7 @@ public abstract class VM implements SimulationEntity {
     public void tick() {
         this.fluctuateLoad();
         this.fluctuateNetworkTraffic();
-        System.out.println("Tick " + this.toString());
+        //logger.fine("Tick " + this.toString());
         //TODO
     }
 

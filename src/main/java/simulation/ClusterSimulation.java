@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import migration.NoMigrationPolicy;
 import migration.RandomMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
@@ -18,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.*;
 
 /**
  * A simulation of a cluster
@@ -36,6 +36,8 @@ public class ClusterSimulation {
     @NonNull
     private MigrationPolicy migrationPolicy;
 
+    private final static Logger logger = Logger.getLogger(ClusterSimulation.class.getName());
+
     public long clock;
     private Set<Migration> currentMigrations = new HashSet<>();
     private ExcelLogger excelLogger = new ExcelLogger();
@@ -46,13 +48,16 @@ public class ClusterSimulation {
     public void run(int ticks) {
         clock = 0;
         while (clock < ticks) {
-            System.out.println("== TICK " + clock + " ==");
+            logger.fine("== TICK " + clock + " ==");
             // Update load and network traffic
             cluster.tick();
             // Determine migrations
+            logger.fine("Open migrations: " + currentMigrations.size());
             currentMigrations.addAll(migrationPolicy.update(cluster));
+            logger.fine("Total migrations: " + currentMigrations.size());
             // Apply migrations
             executeMigrations();
+            logger.fine("Remaining migrations: " + currentMigrations.size());
             // Update the log
             updateLog();
             clock++;
@@ -60,12 +65,15 @@ public class ClusterSimulation {
     }
 
     private void executeMigrations() {
+        logger.fine("Executing migrations");
+
         for (Migration migration : currentMigrations) {
             executeMigration(migration);
+            logger.fine(String.valueOf(migration.getTransferredData() >= migration.getVm().getSize()));
         }
 
         // Remove finished migrations
-        currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
+        logger.fine(String.valueOf(this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize())));
     }
 
     private void executeMigration(Migration migration) {
@@ -73,7 +81,7 @@ public class ClusterSimulation {
         migration.getVm().setState(VM.State.MIGRATING);
         migration.getTargetVM().setState(VM.State.RESERVED);
 
-        System.out.println(migration);
+        logger.fine(migration.toString());
 
         // Get the connection
         Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
@@ -85,7 +93,10 @@ public class ClusterSimulation {
         migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 
         // If all data is transfered, the migration is completed
+        //logger.fine(migration.getTransferredData());
+        //logger.fine(migration.getVm().getSize());
         if (migration.getTransferredData() >= migration.getVm().getSize()) {
+            logger.fine("Migration completed: " + migration);
             migration.getFrom().removeVM(migration.getVm());
             migration.getTo().removeVM(migration.getTargetVM());
             migration.getTo().addVM(migration.getVm());
@@ -184,16 +195,23 @@ public class ClusterSimulation {
     }
 
     public static void main(String[] args) {
+        // Setup logging
+        Logger globalLogger = LogManager.getLogManager().getLogger("");
+        Handler handler = new ConsoleHandler();
+        globalLogger.setLevel(Level.ALL);
+        handler.setLevel(Level.ALL);
+        globalLogger.addHandler(handler);
+
         // Build the cluster
         Cluster<Node, Cable> cluster = simpleCluster();
 
-        System.out.println(cluster);
+        ClusterSimulation.logger.fine(cluster.toString());
 
         // Create the simulation
         ClusterSimulation simulation = new ClusterSimulation(cluster, new RandomMigrationPolicy(0.3));
 
         //Set time
-        int ticks = 15;
+        int ticks = 2;
 
         // Start
         simulation.run(ticks);

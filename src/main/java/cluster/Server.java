@@ -6,10 +6,12 @@ import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Data
 public class Server extends Node {
+    private final static Logger logger = Logger.getLogger(Server.class.getName());
 
     /**
      * Based on:
@@ -101,7 +103,7 @@ public class Server extends Node {
 
     @Override
     public String toString() {
-        return "Server(cpu=" + getCPU() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ")";
+        return "Server(id=" + id + ", cpu=" + getCPU() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ")";
     }
 
     @Override
@@ -113,7 +115,7 @@ public class Server extends Node {
             vm.tick();
         }
 
-        System.out.println(this);
+        logger.fine(this.toString());
 
         //TODO: tag new VMs for migrations
         //TODO: update machine state if going to sleep or woken up
