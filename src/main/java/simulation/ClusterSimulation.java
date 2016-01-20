@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import migration.NoMigrationPolicy;
 import migration.RandomMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
@@ -84,7 +83,7 @@ public class ClusterSimulation {
         // Determine transferred bytes
         migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 
-        // If all data is transfered, the migration is completed
+        // If all data is transferred, the migration is completed
         if (migration.getTransferredData() >= migration.getVm().getSize()) {
             migration.getFrom().removeVM(migration.getVm());
             migration.getTo().removeVM(migration.getTargetVM());

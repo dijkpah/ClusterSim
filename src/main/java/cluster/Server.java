@@ -13,7 +13,7 @@ public class Server extends Node {
 
     /**
      * Based on:
-     * <p>
+     *
      * FIVE WAYS TO REDUCE DATA CENTER SERVER POWER CONSUMPTION
      * Blackburn 2008
      */
@@ -22,11 +22,12 @@ public class Server extends Node {
     /**
      * Amount of hyperthreads
      */
-
     //Intel Xeon E5-2676 v3 has 12 cores and 24 hyperthreads
     //Source: http://www.cpu-world.com/CPUs/Xeon/Intel-Xeon%20E5-2676%20v3.html
     public static final int vCPUs = 12;
     private List<VM> vms;
+
+    private State state = State.AVAILABLE;
 
     /**
      * Maximum possible CPU load in percent (100% per core * cores)
