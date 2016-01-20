@@ -38,6 +38,12 @@ public class ClusterSimulation {
     private List<Migration> currentMigrations = new ArrayList<>();
     private ExcelLogger excelLogger = new ExcelLogger();
 
+    /** The total number of migrations in the last tick */
+    private int totalMigrations;
+
+    /** The number of remaining (uncompleted) migrations in the last tick */
+    private int remainingMigrations;
+
     /**
      * Start the simulation
      */
@@ -50,21 +56,26 @@ public class ClusterSimulation {
         clock = 0;
         while (clock < ticks) {
             logger.fine("== TICK " + clock + " ==");
+
             // Update load and network traffic
             cluster.tick();
+
             // Update the connections between VMs and the VMs and the world
             cluster.updateVMConnections();
+
             // Determine migrations
-            logger.finer("Open migrations: " + currentMigrations.size());
             currentMigrations.addAll(migrationPolicy.update(cluster));
-            logger.finer("Total migrations: " + currentMigrations.size());
+
             // Apply migrations
+            setTotalMigrations(currentMigrations.size());
             executeMigrations();
-            logger.finer("Remaining migrations: " + currentMigrations.size());
+            setRemainingMigrations(currentMigrations.size());
 
             // Apply the network traffic of the connections to the edges
             cluster.applyNetworkTraffic();
 
+            logger.finer("Total migrations: " + currentMigrations.size());
+            logger.finer("Remaining migrations: " + currentMigrations.size());
             logger.finer("Edges: " + cluster.getEdges());
 
             // Update states of servers
@@ -119,26 +130,7 @@ public class ClusterSimulation {
      * Enters power consumption summations for servers and connections
      */
     private void updateLog() {
-        int serverConsumption = 0;
-        int baseSwitchConsumption = 0;
-        int externalNetworkConsumption = 0;
-        int internalNetworkConsumption = 0;
-        int migrationNetworkConsumption = 0;
-
-        for (Node node : cluster.getNodes()) {
-            if (node instanceof Server) {
-                serverConsumption += ((Server) node).getPowerUsage();
-            } else if (node instanceof Switch) {
-                Switch aSwitch = (Switch) node;
-                baseSwitchConsumption += aSwitch.getBaseConsumption();
-                externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
-                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
-                migrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
-            } else if (!(node instanceof World)) {
-                new Exception("unknown Node type: " + node.getClass().getName()).printStackTrace();
-            }
-        }
-        excelLogger.addTick(serverConsumption, baseSwitchConsumption, externalNetworkConsumption, internalNetworkConsumption, migrationNetworkConsumption);
+        excelLogger.tick(this);
     }
 
 
