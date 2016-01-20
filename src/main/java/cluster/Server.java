@@ -115,7 +115,7 @@ public class Server extends Node {
             vm.tick();
         }
 
-        logger.fine(this.toString());
+        logger.finest("Tick " + this.toString());
 
         //TODO: tag new VMs for migrations
         //TODO: update machine state if going to sleep or woken up

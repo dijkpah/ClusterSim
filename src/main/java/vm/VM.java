@@ -9,6 +9,7 @@ import simulation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 // Each VM type is characterized by processing performance defined in MIPS, RAM
 // capacity, storage capacity and network bandwidth
@@ -16,6 +17,7 @@ import java.util.Map;
 @ToString(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
 @EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
 public abstract class VM implements SimulationEntity {
+    private final static Logger logger = Logger.getLogger(VM.class.getName());
 
     @NonNull
     public final int id;
@@ -109,7 +111,7 @@ public abstract class VM implements SimulationEntity {
     public void tick() {
         this.fluctuateLoad();
         this.fluctuateNetworkTraffic();
-        //logger.fine("Tick " + this.toString());
+        logger.finest("Tick " + this.toString());
         //TODO
     }
 

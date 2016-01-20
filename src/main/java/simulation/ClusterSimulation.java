@@ -13,10 +13,7 @@ import vm.M4LargeVM;
 import vm.M4XLargeVM;
 import vm.VM;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.*;
 
 /**
@@ -39,7 +36,7 @@ public class ClusterSimulation {
     private final static Logger logger = Logger.getLogger(ClusterSimulation.class.getName());
 
     public long clock;
-    private Set<Migration> currentMigrations = new HashSet<>();
+    private List<Migration> currentMigrations = new ArrayList<>();
     private ExcelLogger excelLogger = new ExcelLogger();
 
     /**
@@ -69,11 +66,10 @@ public class ClusterSimulation {
 
         for (Migration migration : currentMigrations) {
             executeMigration(migration);
-            logger.fine(String.valueOf(migration.getTransferredData() >= migration.getVm().getSize()));
         }
 
         // Remove finished migrations
-        logger.fine(String.valueOf(this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize())));
+        this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
     }
 
     private void executeMigration(Migration migration) {
@@ -81,7 +77,7 @@ public class ClusterSimulation {
         migration.getVm().setState(VM.State.MIGRATING);
         migration.getTargetVM().setState(VM.State.RESERVED);
 
-        logger.fine(migration.toString());
+        logger.finer(migration.toString());
 
         // Get the connection
         Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
@@ -96,7 +92,7 @@ public class ClusterSimulation {
         //logger.fine(migration.getTransferredData());
         //logger.fine(migration.getVm().getSize());
         if (migration.getTransferredData() >= migration.getVm().getSize()) {
-            logger.fine("Migration completed: " + migration);
+            logger.finer("Migration completed: " + migration);
             migration.getFrom().removeVM(migration.getVm());
             migration.getTo().removeVM(migration.getTargetVM());
             migration.getTo().addVM(migration.getVm());
@@ -198,8 +194,8 @@ public class ClusterSimulation {
         // Setup logging
         Logger globalLogger = LogManager.getLogManager().getLogger("");
         Handler handler = new ConsoleHandler();
-        globalLogger.setLevel(Level.ALL);
-        handler.setLevel(Level.ALL);
+        globalLogger.setLevel(Level.FINER);
+        handler.setLevel(Level.FINER);
         handler.setFormatter(new ClusterSimLogFormatter());
         globalLogger.addHandler(handler);
 
