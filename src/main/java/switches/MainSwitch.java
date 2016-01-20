@@ -9,9 +9,10 @@ import simulation.SimulationEntity;
 @EqualsAndHashCode(callSuper = true)
 public class MainSwitch extends Switch implements SimulationEntity {
 
-    @Getter public final int CAPACITY = 1000;
-    @Getter public final int BASEPOWER = 90;
-    @Getter public final int MAXPOWER = 120;
+    //Cisco Nexus 7000 M2-Series 6-Port 40 Gigabit Ethernet Module with XL Option
+    @Getter public final int CAPACITY = 40000;
+    @Getter public final int BASEPOWER = 700;
+    @Getter public final int MAXPOWER = 800;
 
     public MainSwitch(int id){
         super(id);
