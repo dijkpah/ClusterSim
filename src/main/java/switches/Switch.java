@@ -8,9 +8,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import simulation.SimulationEntity;
 
+import java.util.logging.Logger;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public abstract class Switch extends Node implements SimulationEntity {
+    private final static Logger logger = Logger.getLogger(Switch.class.getName());
 
     @Getter public final int CAPACITY = 0;
     @Getter public final int BASEPOWER = 0;
@@ -43,7 +46,7 @@ public abstract class Switch extends Node implements SimulationEntity {
 
             }
         }
-        System.out.println(this + ": " + cableBandwidthUsed + "/" + cableCapacity);
+        logger.finest(this + ": " + cableBandwidthUsed + "/" + cableCapacity);
         return (int)((double)cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption()));
     }
 

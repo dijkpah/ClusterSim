@@ -7,11 +7,13 @@ import graph.Node;
 import vm.VM;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Migration policy which does not do migrations
  */
 public class RandomMigrationPolicy implements MigrationPolicy{
+    private final static Logger logger = Logger.getLogger(RandomMigrationPolicy.class.getName());
 
     private double upperThreshold;
 
@@ -26,7 +28,7 @@ public class RandomMigrationPolicy implements MigrationPolicy{
             if(node instanceof Server){
                 Server server = (Server) node;
                 if(server.getRunningCPU() > server.MAX_CPU*upperThreshold){
-                    System.out.println("Server has exceeded upper threshold: " + server);
+                    logger.fine("Server has exceeded upper threshold: " + server);
                     // Migrate some VMs
                     Set<VM> toMigrate = determineVMsToMigrate(server);
                     for(VM vm : toMigrate){
@@ -42,7 +44,7 @@ public class RandomMigrationPolicy implements MigrationPolicy{
     }
 
     public Server allocateVM(VM vm, Cluster<Node, Cable> cluster) {
-        System.out.println("Allocating VM " + vm);
+        logger.fine("Allocating VM " + vm);
         Random random = new Random();
         Server result = null;
         while(result == null){
@@ -68,7 +70,7 @@ public class RandomMigrationPolicy implements MigrationPolicy{
             if(bestVM != null){
                 bestVM.setState(VM.State.MIGRATING);
                 result.add(bestVM);
-                System.out.println("VM found to migrate: " + bestVM);
+                logger.fine("VM found to migrate: " + bestVM);
             }
         }
         return result;

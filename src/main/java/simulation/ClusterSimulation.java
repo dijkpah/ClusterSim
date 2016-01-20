@@ -13,10 +13,8 @@ import vm.M4LargeVM;
 import vm.M4XLargeVM;
 import vm.VM;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.*;
 
 /**
  * A simulation of a cluster
@@ -35,23 +33,55 @@ public class ClusterSimulation {
     @NonNull
     private MigrationPolicy migrationPolicy;
 
+    private final static Logger logger = Logger.getLogger(ClusterSimulation.class.getName());
+
     public long clock;
-    private Set<Migration> currentMigrations = new HashSet<>();
+    private List<Migration> currentMigrations = new ArrayList<>();
     private ExcelLogger excelLogger = new ExcelLogger();
+
+    /** The total number of migrations in the last tick */
+    private int totalMigrations;
+
+    /** The number of remaining (uncompleted) migrations in the last tick */
+    private int remainingMigrations;
 
     /**
      * Start the simulation
      */
     public void run(int ticks) {
+        logger.info("Starting new simulation");
+        logger.info("Cluster: " + cluster.toString());
+        logger.info("Migration policy: " + migrationPolicy.toString());
+        logger.info("Number of ticks: " + ticks);
+
         clock = 0;
         while (clock < ticks) {
-            System.out.println("== TICK " + clock + " ==");
+            logger.fine("== TICK " + clock + " ==");
+
             // Update load and network traffic
             cluster.tick();
+
+            // Update the connections between VMs and the VMs and the world
+            cluster.updateVMConnections();
+
             // Determine migrations
             currentMigrations.addAll(migrationPolicy.update(cluster));
+
             // Apply migrations
+            setTotalMigrations(currentMigrations.size());
             executeMigrations();
+            setRemainingMigrations(currentMigrations.size());
+
+            // Apply the network traffic of the connections to the edges
+            cluster.applyNetworkTraffic();
+
+            logger.finer("Total migrations: " + currentMigrations.size());
+            logger.finer("Remaining migrations: " + currentMigrations.size());
+            logger.finer("Edges: " + cluster.getEdges());
+
+            // Update states of servers
+
+
             // Update the log
             updateLog();
             clock++;
@@ -59,12 +89,14 @@ public class ClusterSimulation {
     }
 
     private void executeMigrations() {
+        logger.fine("Executing migrations");
+
         for (Migration migration : currentMigrations) {
             executeMigration(migration);
         }
 
         // Remove finished migrations
-        currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
+        this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
     }
 
     private void executeMigration(Migration migration) {
@@ -72,7 +104,7 @@ public class ClusterSimulation {
         migration.getVm().setState(VM.State.MIGRATING);
         migration.getTargetVM().setState(VM.State.RESERVED);
 
-        System.out.println(migration);
+        logger.finer(migration.toString());
 
         // Get the connection
         Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
@@ -83,8 +115,12 @@ public class ClusterSimulation {
         // Determine transferred bytes
         migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 
+
         // If all data is transferred, the migration is completed
+        //logger.fine(migration.getTransferredData());
+        //logger.fine(migration.getVm().getSize());
         if (migration.getTransferredData() >= migration.getVm().getSize()) {
+            logger.finer("Migration completed: " + migration);
             migration.getFrom().removeVM(migration.getVm());
             migration.getTo().removeVM(migration.getTargetVM());
             migration.getTo().addVM(migration.getVm());
@@ -96,26 +132,7 @@ public class ClusterSimulation {
      * Enters power consumption summations for servers and connections
      */
     private void updateLog() {
-        int serverConsumption = 0;
-        int baseSwitchConsumption = 0;
-        int externalNetworkConsumption = 0;
-        int internalNetworkConsumption = 0;
-        int migrationNetworkConsumption = 0;
-
-        for (Node node : cluster.getNodes()) {
-            if (node instanceof Server) {
-                serverConsumption += ((Server) node).getPowerUsage();
-            } else if (node instanceof Switch) {
-                Switch aSwitch = (Switch) node;
-                baseSwitchConsumption += aSwitch.getBaseConsumption();
-                externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
-                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
-                migrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
-            } else if (!(node instanceof World)) {
-                new Exception("unknown Node type: " + node.getClass().getName()).printStackTrace();
-            }
-        }
-        excelLogger.addTick(serverConsumption, baseSwitchConsumption, externalNetworkConsumption, internalNetworkConsumption, migrationNetworkConsumption);
+        excelLogger.tick(this);
     }
 
 
@@ -183,21 +200,31 @@ public class ClusterSimulation {
     }
 
     public static void main(String[] args) {
-        // Build the cluster
-        Cluster<Node, Cable> cluster = simpleCluster();
-
-        System.out.println(cluster);
+        // Setup logging
+        setupLogging();
 
         // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(cluster, new RandomMigrationPolicy(0.3));
+        ClusterSimulation simulation = new ClusterSimulation(Params.CLUSTER, Params.MIGRATION_POLICY);
 
         //Set time
-        int ticks = 15;
+        int ticks = Params.TICK_COUNT;
 
         // Start
         simulation.run(ticks);
 
         //Create Graph
         simulation.getExcelLogger().makeGraph();
+    }
+
+    private static void setupLogging(){
+        Logger globalLogger = LogManager.getLogManager().getLogger("");
+        Handler handler = new ConsoleHandler();
+        globalLogger.setLevel(Level.FINER);
+        for(Handler defaultHandler : globalLogger.getHandlers()){
+            globalLogger.removeHandler(defaultHandler);
+        }
+        handler.setLevel(Level.FINER);
+        handler.setFormatter(new ClusterSimLogFormatter());
+        globalLogger.addHandler(handler);
     }
 }
