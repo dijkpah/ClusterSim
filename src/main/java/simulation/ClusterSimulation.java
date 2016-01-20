@@ -190,7 +190,7 @@ public class ClusterSimulation {
         System.out.println(cluster);
 
         // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(cluster, new NoMigrationPolicy(0.3));
+        ClusterSimulation simulation = new ClusterSimulation(cluster, new RandomMigrationPolicy(0.3));
 
         //Set time
         int ticks = 15;

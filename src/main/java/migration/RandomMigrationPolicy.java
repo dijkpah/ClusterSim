@@ -20,12 +20,13 @@ public class RandomMigrationPolicy implements MigrationPolicy{
     }
 
     public List<Migration> update(Cluster<Node, Cable> cluster) {
-        List<Migration> result = new ArrayList<Migration>();
+        List<Migration> result = new ArrayList<>();
 
         for(Node node : cluster.getNodes()){
             if(node instanceof Server){
                 Server server = (Server) node;
-                if(server.getNonMigratingCPU() > server.MAX_CPU*upperThreshold){
+                if(server.getRunningCPU() > server.MAX_CPU*upperThreshold){
+                    System.out.println("Server has exceeded upper threshold: " + server);
                     // Migrate some VMs
                     Set<VM> toMigrate = determineVMsToMigrate(server);
                     for(VM vm : toMigrate){
@@ -41,6 +42,7 @@ public class RandomMigrationPolicy implements MigrationPolicy{
     }
 
     public Server allocateVM(VM vm, Cluster<Node, Cable> cluster) {
+        System.out.println("Allocating VM " + vm);
         Random random = new Random();
         Server result = null;
         while(result == null){
@@ -54,19 +56,19 @@ public class RandomMigrationPolicy implements MigrationPolicy{
 
     @Override
     public Set<VM> determineVMsToMigrate(Server server) {
-        Set<VM> result = new HashSet<VM>();
-        int removed = 0;
-        while(server.getNonMigratingCPU() > server.MAX_CPU*upperThreshold){
+        Set<VM> result = new HashSet<>();
+        while(server.getRunningVMs().size() > 1 && server.getRunningCPU() > server.MAX_CPU*upperThreshold){
             // Pick one with largest CPU
             VM bestVM = null;
             for(VM vm : server.getVms()){
-                if(vm.getState().equals(Thread.State.RUNNABLE) && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
+                if(vm.getState().equals(VM.State.RUNNING) && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
                     bestVM = vm;
                 }
             }
             if(bestVM != null){
+                bestVM.setState(VM.State.MIGRATING);
                 result.add(bestVM);
-                removed += bestVM.getCPU();
+                System.out.println("VM found to migrate: " + bestVM);
             }
         }
         return result;
