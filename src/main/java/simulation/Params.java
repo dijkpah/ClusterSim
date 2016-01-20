@@ -1,5 +1,11 @@
 package simulation;
 
+import cluster.Cable;
+import cluster.Cluster;
+import graph.Node;
+import migration.MigrationPolicy;
+import migration.RandomMigrationPolicy;
+
 public class Params {
     /**
      * The initial CPU usage of a VM.
@@ -25,4 +31,9 @@ public class Params {
      * The average network traffic in Mb/s between connected VMs.
      */
     public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 50;
+
+
+    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.3);
+    public static final Cluster<Node,Cable> CLUSTER = ClusterSimulation.simpleCluster();
+    public static final int TICK_COUNT = 2;
 }

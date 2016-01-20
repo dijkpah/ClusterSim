@@ -43,18 +43,27 @@ public class ClusterSimulation {
      * Start the simulation
      */
     public void run(int ticks) {
+        logger.info("Starting new simulation");
+        logger.info("Cluster: " + cluster.toString());
+        logger.info("Migration policy: " + migrationPolicy.toString());
+        logger.info("Number of ticks: " + ticks);
+
         clock = 0;
         while (clock < ticks) {
             logger.fine("== TICK " + clock + " ==");
             // Update load and network traffic
             cluster.tick();
             // Determine migrations
-            logger.fine("Open migrations: " + currentMigrations.size());
+            logger.finer("Open migrations: " + currentMigrations.size());
             currentMigrations.addAll(migrationPolicy.update(cluster));
-            logger.fine("Total migrations: " + currentMigrations.size());
+            logger.finer("Total migrations: " + currentMigrations.size());
             // Apply migrations
             executeMigrations();
-            logger.fine("Remaining migrations: " + currentMigrations.size());
+            logger.finer("Remaining migrations: " + currentMigrations.size());
+
+            // Update states of servers
+
+
             // Update the log
             updateLog();
             clock++;
@@ -192,28 +201,30 @@ public class ClusterSimulation {
 
     public static void main(String[] args) {
         // Setup logging
-        Logger globalLogger = LogManager.getLogManager().getLogger("");
-        Handler handler = new ConsoleHandler();
-        globalLogger.setLevel(Level.FINER);
-        handler.setLevel(Level.FINER);
-        handler.setFormatter(new ClusterSimLogFormatter());
-        globalLogger.addHandler(handler);
-
-        // Build the cluster
-        Cluster<Node, Cable> cluster = simpleCluster();
-
-        ClusterSimulation.logger.fine(cluster.toString());
+        setupLogging();
 
         // Create the simulation
-        ClusterSimulation simulation = new ClusterSimulation(cluster, new RandomMigrationPolicy(0.3));
+        ClusterSimulation simulation = new ClusterSimulation(Params.CLUSTER, Params.MIGRATION_POLICY);
 
         //Set time
-        int ticks = 2;
+        int ticks = Params.TICK_COUNT;
 
         // Start
         simulation.run(ticks);
 
         //Create Graph
         simulation.getExcelLogger().makeGraph();
+    }
+
+    private static void setupLogging(){
+        Logger globalLogger = LogManager.getLogManager().getLogger("");
+        Handler handler = new ConsoleHandler();
+        globalLogger.setLevel(Level.FINER);
+        for(Handler defaultHandler : globalLogger.getHandlers()){
+            globalLogger.removeHandler(defaultHandler);
+        }
+        handler.setLevel(Level.FINER);
+        handler.setFormatter(new ClusterSimLogFormatter());
+        globalLogger.addHandler(handler);
     }
 }
