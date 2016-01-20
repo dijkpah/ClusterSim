@@ -9,10 +9,10 @@ import simulation.SimulationEntity;
 @EqualsAndHashCode(callSuper = true)
 public class TORSwitch extends Switch implements SimulationEntity {
 
-    //Cisco Catalyst 4900M TOR switch
+    //Cisco Catalyst 4948 TOR switch 10 Gigabit
     @Getter public final int CAPACITY = 10000;
-    @Getter public final int BASEPOWER = 300;
-    @Getter public final int MAXPOWER = 446;
+    @Getter public final int BASEPOWER = 176;
+    @Getter public final int MAXPOWER = 300;
 
     public TORSwitch(int id){
         super(id);
