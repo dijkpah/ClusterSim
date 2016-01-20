@@ -200,6 +200,7 @@ public class ClusterSimulation {
         Handler handler = new ConsoleHandler();
         globalLogger.setLevel(Level.ALL);
         handler.setLevel(Level.ALL);
+        handler.setFormatter(new ClusterSimLogFormatter());
         globalLogger.addHandler(handler);
 
         // Build the cluster
