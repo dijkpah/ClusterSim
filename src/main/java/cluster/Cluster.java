@@ -5,14 +5,13 @@ import graph.Node;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import simulation.ExcelLogger;
 import simulation.SimulationEntity;
-import switches.Switch;
 import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @ToString(callSuper = true)
@@ -22,6 +21,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
 
 
     private List<Connection> connections = new ArrayList<Connection>();
+    private List<Server> servers;
 
     public Cluster(World world, List<N> nodes, List<E> edges) {
         super(nodes, edges);
@@ -33,8 +33,8 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         for (Connection connection : connections) {
             if (connection.getType().equals(type) && (
                     (connection.getFirstEndPoint().equals(node1) && connection.getSecondEndPoint().equals(node2)) ||
-                    (connection.getFirstEndPoint().equals(node2) && connection.getSecondEndPoint().equals(node1))
-                )) {
+                            (connection.getFirstEndPoint().equals(node2) && connection.getSecondEndPoint().equals(node1))
+            )) {
                 result = connection;
             }
         }
@@ -47,11 +47,11 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
 
     public void tick() {
         // Reset connection status
-        for(Connection connection : connections){
+        for (Connection connection : connections) {
             connection.setNetworkTraffic(0);
         }
 
-        for(Cable cable : edges){
+        for (Cable cable : edges) {
             cable.setExternalCommunicationBandwidth(0);
             cable.setInternalCommunicationBandwidth(0);
             cable.setMigrationBandwidth(0);
@@ -64,24 +64,24 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         }
     }
 
-    public void updateVMConnections(){
+    public void updateVMConnections() {
         // Update connections from VMs to the world and inter-VM
         for (N node : nodes) {
             Connection connection;
-            if(node instanceof Server){
+            if (node instanceof Server) {
                 Server server = (Server) node;
-                for(VM vm : server.getVms()){
+                for (VM vm : server.getVms()) {
                     // Connection to the world
                     connection = this.getConnection(Connection.Type.EXTERNAL, server, this.getWorld());
-                    if(connection==null){
+                    if (connection == null) {
                         System.err.println("WHAAAAAAAAAAA");
                     }
                     connection.addNetworkTraffic(vm.getNetworkTrafficToWorld());
 
                     // Connections between VMs
-                    for (Map.Entry<VM, Integer> other : vm.getConnectedVMs().entrySet()){
+                    for (Map.Entry<VM, Integer> other : vm.getConnectedVMs().entrySet()) {
                         connection = this.getConnection(Connection.Type.INTERNAL, server, other.getKey().getServer());
-                        if(connection==null){
+                        if (connection == null) {
                             System.err.println("WHAAAAAAAAAAA");
                         }
                         connection.addNetworkTraffic(other.getValue());
@@ -91,9 +91,34 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         }
     }
 
-    public void applyNetworkTraffic(){
-        for(Connection connection : connections){
+    public void applyNetworkTraffic() {
+        for (Connection connection : connections) {
             connection.applyNetworkTraffic();
         }
     }
+
+    /**
+     * Get all servers which are currently available to host VMs.
+     * In other words: servers which are not sleeping, booting up or shutting down.
+     *
+     * @return
+     */
+    public List<Server> getPossibleTargetServers() {
+        return this.getServers().stream().filter(s -> s.getState().equals(Server.State.AVAILABLE)).collect(Collectors.toList());
+    }
+
+    private List<Server> getServers() {
+        // Lazy loading
+        if (servers == null) {
+            servers = new ArrayList<Server>();
+            for (Node node : nodes) {
+                if (node instanceof Server) {
+                    servers.add((Server) node);
+                }
+            }
+        }
+        return servers;
+    }
+
+
 }

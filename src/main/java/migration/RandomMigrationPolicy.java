@@ -46,14 +46,10 @@ public class RandomMigrationPolicy implements MigrationPolicy{
     public Server allocateVM(VM vm, Cluster<Node, Cable> cluster) {
         logger.fine("Allocating VM " + vm);
         Random random = new Random();
-        Server result = null;
-        while(result == null){
-            Node node = cluster.getNodes().get(random.nextInt(cluster.getNodes().size()));
-            if(node instanceof Server){
-                result = (Server)node;
-            }
-        }
-        return result;
+
+        List<Server> possibleServers = cluster.getPossibleTargetServers();
+
+        return possibleServers.size() > 0 ? possibleServers.get(random.nextInt(possibleServers.size())) : null;
     }
 
     @Override

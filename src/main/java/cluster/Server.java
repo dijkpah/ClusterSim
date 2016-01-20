@@ -30,6 +30,8 @@ public class Server extends Node {
     public static final int vCPUs = 12;
     private List<VM> vms;
 
+    private State state = State.AVAILABLE;
+
     /**
      * Maximum possible CPU load in percent (100% per core * cores)
      */
