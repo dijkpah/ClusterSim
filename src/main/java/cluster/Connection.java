@@ -26,15 +26,15 @@ public class Connection extends Path{
     public void applyNetworkTraffic() {
         switch(type){
             case MIGRATION:
-                for(Edge cable : edges){
+                for(Edge cable : getEdges()){
                     ((Cable)cable).setMigrationBandwidth(((Cable)cable).getMigrationBandwidth() + networkTraffic);
                 }
             case INTERNAL:
-                for(Edge cable : edges){
+                for(Edge cable : getEdges()){
                     ((Cable)cable).setInternalCommunicationBandwidth(((Cable)cable).getInternalCommunicationBandwidth() + networkTraffic);
                 }
             case EXTERNAL:
-                for(Edge cable : edges){
+                for(Edge cable : getEdges()){
                     ((Cable)cable).setExternalCommunicationBandwidth(((Cable)cable).getExternalCommunicationBandwidth() + networkTraffic);
                 }
         }

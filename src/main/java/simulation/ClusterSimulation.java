@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import migration.RandomMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
 import vm.M4LargeVM;
@@ -53,6 +52,8 @@ public class ClusterSimulation {
             logger.fine("== TICK " + clock + " ==");
             // Update load and network traffic
             cluster.tick();
+            // Update the connections between VMs and the VMs and the world
+            cluster.updateVMConnections();
             // Determine migrations
             logger.finer("Open migrations: " + currentMigrations.size());
             currentMigrations.addAll(migrationPolicy.update(cluster));
@@ -60,6 +61,11 @@ public class ClusterSimulation {
             // Apply migrations
             executeMigrations();
             logger.finer("Remaining migrations: " + currentMigrations.size());
+
+            // Apply the network traffic of the connections to the edges
+            cluster.applyNetworkTraffic();
+
+            logger.finer("Edges: " + cluster.getEdges());
 
             // Update states of servers
 

@@ -33,7 +33,7 @@ public class Params {
     public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 50;
 
 
-    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.3);
+    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.8);
     public static final Cluster<Node,Cable> CLUSTER = ClusterSimulation.simpleCluster();
-    public static final int TICK_COUNT = 2;
+    public static final int TICK_COUNT = 200;
 }

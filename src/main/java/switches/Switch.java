@@ -46,7 +46,7 @@ public abstract class Switch extends Node implements SimulationEntity {
 
             }
         }
-        logger.fine(this + ": " + cableBandwidthUsed + "/" + cableCapacity);
+        logger.finest(this + ": " + cableBandwidthUsed + "/" + cableCapacity);
         return (int)((double)cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption()));
     }
 
