@@ -6,6 +6,7 @@ import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class Server extends Node {
@@ -86,6 +87,18 @@ public class Server extends Node {
         return total;
     }
 
+    /**
+     * Get the cpu usage caused by vms which are not migrating or reserved VMs
+     * @return
+     */
+    public int getRunningCPU() {
+        int total = 0;
+        for (VM vm : getRunningVMs()) {
+            total += vm.getCPU();
+        }
+        return total;
+    }
+
     @Override
     public String toString() {
         return "Server(cpu=" + getCPU() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ")";
@@ -111,6 +124,12 @@ public class Server extends Node {
         return getCPU() >= MAX_CPU;
     }
 
+    /**
+     * Get all VMs which are not migrating and not reserved space.
+     */
+    public List<VM> getRunningVMs() {
+        return vms.stream().filter(vm -> vm.getState().equals(VM.State.RUNNING)).collect(Collectors.toList());
+    }
 
     public enum State {
         SLEEPING,
