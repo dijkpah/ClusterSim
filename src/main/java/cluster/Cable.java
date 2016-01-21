@@ -18,6 +18,7 @@ public class Cable extends Edge {
     public Cable(Node node1, Node node2, int capacity) {
         super(node1, node2, 0);//Weight is zero at start
         this.capacity = capacity;
+        this.reset();
     }
 
     @Override
@@ -36,5 +37,11 @@ public class Cable extends Edge {
 
     public String toString(){
         return "Cable(1="+this.getFirstNode().getId()+", 2="+this.getSecondNode().getId() + ", external=" + externalCommunicationBandwidth + ", internal=" + internalCommunicationBandwidth + ", migration=" + migrationBandwidth + ")";
+    }
+
+    public void reset() {
+        this.externalCommunicationBandwidth = 0;
+        this.internalCommunicationBandwidth = 0;
+        this.migrationBandwidth = 0;
     }
 }

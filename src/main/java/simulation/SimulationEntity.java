@@ -7,4 +7,9 @@ public interface SimulationEntity {
      */
     public void tick();
 
+    /**
+     * Reset the simulation for a new tick.
+     */
+    public void reset();
+
 }

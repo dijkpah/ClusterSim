@@ -18,6 +18,10 @@ public class Path implements SimulationEntity {
     public void tick() {
     }
 
+    public void reset() {
+
+    }
+
     public Path(Node firstEndPoint, Node secondEndPoint) {
         this.firstEndPoint = firstEndPoint;
         this.secondEndPoint = secondEndPoint;

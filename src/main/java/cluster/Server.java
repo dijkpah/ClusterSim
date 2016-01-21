@@ -123,6 +123,13 @@ public class Server extends Node {
         //TODO: reserve room for VMs on physical machines
     }
 
+    @Override
+    public void reset() {
+        for (VM vm : vms) {
+            vm.reset();
+        }
+    }
+
     public boolean hasSLAViolation() {
         return getCPU() >= MAX_CPU;
     }

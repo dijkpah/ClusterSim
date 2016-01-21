@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import migration.RandomMigrationPolicy;
 import switches.MainSwitch;
 import switches.Switch;
 import vm.M4LargeVM;
@@ -58,29 +57,30 @@ public class ClusterSimulation {
         while (clock < ticks) {
             logger.fine("== TICK " + clock + " ==");
 
-            // Update load and network traffic
+            // Reset the cluster for the new tick
+            // This mainly resets the traffic on the cables
+            cluster.reset();
+
+            // Step 1 and 2 happen at the start of the tick,
+
+            // Step 1: Update load and network traffic
             cluster.tick();
 
-            // Update the connections between VMs and the VMs and the world
-            cluster.updateVMConnections();
-
-            // Determine migrations
+            // Step 2: Determine migrations
             currentMigrations.addAll(migrationPolicy.update(cluster));
 
-            // Apply migrations
+            // Step 3: Apply migrations
             setTotalMigrations(currentMigrations.size());
             executeMigrations();
             setRemainingMigrations(currentMigrations.size());
 
-            // Apply the network traffic of the connections to the edges
-            cluster.applyNetworkTraffic();
-
-            logger.finer("Total migrations: " + currentMigrations.size());
-            logger.finer("Remaining migrations: " + currentMigrations.size());
+            logger.finer("Total migrations: " + getTotalMigrations());
+            logger.finer("Remaining migrations: " + getRemainingMigrations());
             logger.finer("Edges: " + cluster.getEdges());
 
             // Update states of servers
 
+            // Update connections of migrated VMS
 
             // Update the log
             updateLog();
@@ -112,6 +112,8 @@ public class ClusterSimulation {
         int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
         // Use all remaining bandwidth
         connection.addNetworkTraffic(bandwidth);
+        // Update the cables
+        connection.applyNetworkTraffic();
         // Determine transferred bytes
         migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 

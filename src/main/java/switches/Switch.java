@@ -28,6 +28,11 @@ public abstract class Switch extends Node implements SimulationEntity {
 
     }
 
+    @Override
+    public void reset() {
+
+    }
+
     public int getMaxConsumption(){
         return this.getMAXPOWER();
     }

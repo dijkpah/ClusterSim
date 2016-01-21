@@ -45,22 +45,35 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         return result;
     }
 
-    public void tick() {
+    @Override
+    public void reset() {
+        // Reset nodes
+        for(N node : nodes){
+            node.reset();
+        }
+
         // Reset connection status
         for (Connection connection : connections) {
-            connection.setNetworkTraffic(0);
+            connection.reset();
         }
 
+        // Reset cable weights
         for (Cable cable : edges) {
-            cable.setExternalCommunicationBandwidth(0);
-            cable.setInternalCommunicationBandwidth(0);
-            cable.setMigrationBandwidth(0);
+            cable.reset();
         }
+    }
 
+    public void tick() {
         // Update load on the nodes
         for (N node : nodes) {
             // Update load and network traffic
             node.tick();
+        }
+
+        this.updateVMConnections();
+
+        for (Connection connection : connections) {
+            connection.tick();
         }
     }
 
@@ -75,6 +88,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                     connection = this.getConnection(Connection.Type.EXTERNAL, server, this.getWorld());
                     if (connection == null) {
                         System.err.println("WHAAAAAAAAAAA");
+                        return;
                     }
                     connection.addNetworkTraffic(vm.getNetworkTrafficToWorld());
 
@@ -83,17 +97,12 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                         connection = this.getConnection(Connection.Type.INTERNAL, server, other.getKey().getServer());
                         if (connection == null) {
                             System.err.println("WHAAAAAAAAAAA");
+                            return;
                         }
                         connection.addNetworkTraffic(other.getValue());
                     }
                 }
             }
-        }
-    }
-
-    public void applyNetworkTraffic() {
-        for (Connection connection : connections) {
-            connection.applyNetworkTraffic();
         }
     }
 

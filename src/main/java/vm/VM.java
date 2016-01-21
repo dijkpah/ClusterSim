@@ -115,6 +115,10 @@ public abstract class VM implements SimulationEntity {
         //TODO
     }
 
+    public void reset(){
+
+    }
+
     public abstract VM createReservedSpace();
 
     public enum State {

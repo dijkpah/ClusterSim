@@ -14,6 +14,11 @@ public class World extends Node {
     }
 
     @Override
+    public void reset() {
+
+    }
+
+    @Override
     public String toString() {
         return "World(id=" + id + ")";
     }
