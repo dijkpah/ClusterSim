@@ -35,6 +35,9 @@ public class Params {
 
     public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.4);
     public static final Cluster<Node,Cable> CLUSTER = ClusterSimulation.simpleCluster();
-    public static final int TICK_COUNT = 200;
+    public static final int TICK_COUNT = 20;
+
+
     public static final String OUTPUT_FILE = "simulation.tsv";
+    public static final String OUTPUT_SEPARATOR = "\t";
 }

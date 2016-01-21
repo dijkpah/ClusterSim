@@ -221,11 +221,11 @@ public class ClusterSimulation {
     private static void setupLogging(){
         Logger globalLogger = LogManager.getLogManager().getLogger("");
         Handler handler = new ConsoleHandler();
-        globalLogger.setLevel(Level.FINER);
+        globalLogger.setLevel(Level.INFO);
         for(Handler defaultHandler : globalLogger.getHandlers()){
             globalLogger.removeHandler(defaultHandler);
         }
-        handler.setLevel(Level.FINER);
+        handler.setLevel(Level.INFO);
         handler.setFormatter(new ClusterSimLogFormatter());
         globalLogger.addHandler(handler);
     }
