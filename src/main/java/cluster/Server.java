@@ -48,7 +48,13 @@ public class Server extends Node {
 
 
     public double getPowerUsage() {
-        return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
+        switch (getState()) {
+            case AVAILABLE:
+                return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
+            case SLEEPING:
+            default:
+                return 0;
+        }
     }
 
     public Server(int id) {
