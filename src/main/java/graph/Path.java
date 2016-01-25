@@ -45,7 +45,7 @@ public class Path implements SimulationEntity {
     private List<Edge> findShortestPath(Node firstEndPoint, Node secondEndPoint, Set<Edge> visited) {
         // Base case: first endpoint is the same as the second endpoint
         if (secondEndPoint.equals(firstEndPoint)) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         } else {
             List<Edge> shortest = null;
 
