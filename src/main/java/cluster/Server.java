@@ -29,7 +29,15 @@ public class Server extends Node {
     //Intel Xeon E5-2676 v3 has 12 cores and 24 hyperthreads
     //Source: http://www.cpu-world.com/CPUs/Xeon/Intel-Xeon%20E5-2676%20v3.html
     public static final int vCPUs = 12;
+
+    /**
+     * A list containing the VMs which are currently running on this server.
+     */
     private List<VM> vms;
+    /**
+     * A list containing the VMs which are currently migrated to this server.
+     */
+    private List<VM> reservedVMs;
 
     private State state = State.AVAILABLE;
 
@@ -38,13 +46,15 @@ public class Server extends Node {
      */
     public static int MAX_CPU = 100 * vCPUs;
 
+
     public double getPowerUsage() {
         return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
     }
 
     public Server(int id) {
         super(id);//superidee!
-        this.vms = new ArrayList<VM>();
+        this.vms = new ArrayList<>();
+        this.reservedVMs = new ArrayList<>();
     }
 
     /**
@@ -141,6 +151,14 @@ public class Server extends Node {
      */
     public List<VM> getRunningVMs() {
         return vms.stream().filter(vm -> vm.getState().equals(VM.State.RUNNING)).collect(Collectors.toList());
+    }
+
+    public void addReservedVM(VM vm) {
+        this.reservedVMs.add(vm);
+    }
+
+    public void removeReservedVM(VM vm) {
+        this.reservedVMs.remove(vm);
     }
 
     public enum State {

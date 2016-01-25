@@ -10,11 +10,4 @@ public class M4XLargeVM extends VM {
     public M4XLargeVM(int id){
         super(id, vCPUs, maxRAM, maxBandwidth, size);
     }
-
-    @Override
-    public VM createReservedSpace() {
-        VM result = new M4XLargeVM(-id);
-        result.setState(State.RESERVED);
-        return result;
-    }
 }

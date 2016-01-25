@@ -13,13 +13,9 @@ import java.util.Set;
 /**
  * Migration policy which does not do migrations
  */
-public class NoMigrationPolicy implements MigrationPolicy{
-    public List<Migration> update(Cluster<Node, Cable> cluster) {
-        return new ArrayList<Migration>();
-    }
-
+public class NoMigrationPolicy extends MigrationPolicy{
     @Override
-    public Server allocateVM(VM vm, Cluster<Node, Cable> cluster) {
+    Server determineMigrationTarget(VM vm, Cluster<Node, Cable> cluster) {
         return null;
     }
 

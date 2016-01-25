@@ -118,10 +118,6 @@ public class ClusterSimulation {
     }
 
     private void executeMigration(Migration migration) {
-        // Update the state of the VMs
-        migration.getVm().setState(VM.State.MIGRATING);
-        migration.getTargetVM().setState(VM.State.RESERVED);
-
         logger.finer(migration.toString());
 
         // Get the connection
@@ -133,7 +129,9 @@ public class ClusterSimulation {
 
         // Determine remaining bandwidth
         int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
-        // Use all remaining bandwidth
+        // Determine used bandwidth and make sure it is rounded up (otherwise there is a small remaining fraction of the VM still in need of transfer).
+        bandwidth = Math.min(bandwidth, (int)Math.ceil((migration.getVm().getSize() - migration.getTransferredData())/(double)Params.TICK_DURATION));
+        // Use this bandwidth
         connection.addNetworkTraffic(bandwidth);
         // Update the cables
         connection.applyNetworkTraffic();
@@ -144,10 +142,10 @@ public class ClusterSimulation {
         // If all data is transferred, the migration is completed
         //logger.fine(migration.getTransferredData());
         //logger.fine(migration.getVm().getSize());
-        if (migration.getTransferredData() >= migration.getVm().getSize()) {
+        if (migration.isCompleted()) {
             logger.finer("Migration completed: " + migration);
             migration.getFrom().removeVM(migration.getVm());
-            migration.getTo().removeVM(migration.getTargetVM());
+            migration.getTo().removeReservedVM(migration.getVm());
             migration.getTo().addVM(migration.getVm());
             migration.getVm().setState(VM.State.RUNNING);
         }
