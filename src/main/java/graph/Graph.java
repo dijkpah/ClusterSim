@@ -15,4 +15,21 @@ public class Graph<N extends Node, E extends Edge> {
         this.nodes = nodes;
         this.edges = edges;
     }
+
+    /**
+     * Find the edge between the given nodes, or null if it does not exist.
+     * @param node1
+     * @param node2
+     * @return
+     */
+    public E findEdge(N node1, N node2) {
+        for (E edge : edges) {
+            if ((edge.getFirstNode().equals(node1) && edge.getSecondNode().equals(node2)) ||
+                    (edge.getFirstNode().equals(node2) && edge.getSecondNode().equals(node1))
+                    ) {
+                return edge;
+            }
+        }
+        return null;
+    }
 }

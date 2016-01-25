@@ -121,6 +121,10 @@ public abstract class VM implements SimulationEntity {
 
     public abstract VM createReservedSpace();
 
+    public void setNetworkTrafficToVM(VM other, int networkTraffic) {
+        connectedVMs.put(other, networkTraffic);
+    }
+
     public enum State {
         RUNNING,
         MIGRATING,
