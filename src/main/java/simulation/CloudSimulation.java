@@ -12,9 +12,7 @@ import vm.M4LargeVM;
 import vm.M4XLargeVM;
 import vm.VM;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,6 +21,12 @@ import java.util.stream.IntStream;
  */
 @Data
 public class CloudSimulation extends ClusterSimulation{
+
+    private static final int nthServerSleeps = 5;//every nth server is put to sleep
+    private static final int amountOfRacks = 4;
+    private static final int serversPerRack = 10;
+    private static final double fractionInGroup = 0.2;
+    private static final int groupSize = 2;
 
 
     public CloudSimulation(Cluster<Node, Cable> cluster, MigrationPolicy migrationPolicy) {
@@ -34,11 +38,7 @@ public class CloudSimulation extends ClusterSimulation{
      */
     public static Cluster<Node, Cable> simpleCloud() {
 
-        int nthServerSleeps = 5;//every nth server is put to sleep
-        int amountOfRacks = 4;
-        int serversPerRack = 20;
-        double fractionInGroup = 0.5;
-        int groupSize = 4;
+
 
         List<Node> nodes = new ArrayList<Node>();
         List<Cable> edges = new ArrayList<Cable>();
@@ -208,10 +208,19 @@ public class CloudSimulation extends ClusterSimulation{
         //Set time
         int ticks = Params.TICK_COUNT;
 
+
+        //List parameters
+        Map<String, String> params = simulation.params();
+        params.put("Fraction of servers in sleep mode", ""+(1/nthServerSleeps));
+        params.put("Amount of server racks with TOR switches", ""+amountOfRacks);
+        params.put("Amount of servers in a server rack", ""+serversPerRack);
+        params.put("Fraction of VMs that belong to a VM group", ""+fractionInGroup);
+        params.put("Size of VM groups", ""+groupSize);
+
         // Start
         simulation.run(ticks);
 
         //Create Graph
-        simulation.getExcelLogger().makeGraph();
+        simulation.getExcelLogger().makeGraph(params);
     }
 }

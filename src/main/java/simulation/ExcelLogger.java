@@ -11,7 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class ExcelLogger {
@@ -98,7 +100,7 @@ public class ExcelLogger {
         this.migrationNetworkUsage.add(migrationNetworkMbps);
     }
 
-    public void makeGraph() {
+    public void makeGraph(Map<String, String> params) {
         int ticks = serverConsumption.size();
 
         //Create file
@@ -111,6 +113,7 @@ public class ExcelLogger {
             e.printStackTrace();
         }
 
+        this.printParams(writer, params);
         this.printStats(writer, "Power Servers (W)                           ", serverConsumption);
         this.printStats(writer, "Power Switch - Base (W)                     ", baseSwitchConsumption);
         this.printStats(writer, "Power Switch - External Traffic (W)         ", externalNetworkConsumption);
@@ -125,6 +128,14 @@ public class ExcelLogger {
         writer.close();
     }
 
+    private void printParams(PrintWriter writer, Map<String, String> params){
+        for(Map.Entry<String, String> param : params.entrySet()){
+            writer.print("Param - "+param.getKey()+ Params.OUTPUT_SEPARATOR);
+            writer.print(param.getValue()+ Params.OUTPUT_SEPARATOR);
+            writer.println();
+        }
+    }
+
     private void printStats(PrintWriter writer, String name, List<Integer> values) {
         writer.print(name + Params.OUTPUT_SEPARATOR);
         for (Integer value : values) {
@@ -135,7 +146,7 @@ public class ExcelLogger {
 
     public static void main(String[] args) {
         ExcelLogger logger = new ExcelLogger();
-        logger.makeGraph();
+        logger.makeGraph(new HashMap<>());
     }
 
 }
