@@ -19,7 +19,8 @@ public class ClusterFactory {
 
     /**
      * Creates a simple cluster with one switch and the given number of servers.
-     * No VMs are installed
+     * No VMs are installed.
+     * The world has id 0, the switch id 1 and the servers counting from 2.
      */
     public static Cluster<Node, Cable> simpleEmptyCluster(int servers) {
         List<Node> nodes = new ArrayList<>();
@@ -37,7 +38,7 @@ public class ClusterFactory {
 
         // Create servers
         for(int j=0; j<servers; j++){
-            Server server = new Server(j+1);
+            Server server = new Server(j+2);
             nodes.add(server);
             edges.add(createCable(server, switch1));
         }

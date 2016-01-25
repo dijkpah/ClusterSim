@@ -33,7 +33,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         for (Connection connection : connections) {
             if (connection.getType().equals(type) && (
                     (connection.getFirstEndPoint().equals(node1) && connection.getSecondEndPoint().equals(node2)) ||
-                            (connection.getFirstEndPoint().equals(node2) && connection.getSecondEndPoint().equals(node1))
+                    (connection.getFirstEndPoint().equals(node2) && connection.getSecondEndPoint().equals(node1))
             )) {
                 result = connection;
             }
@@ -116,11 +116,11 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
         return this.getServers().stream().filter(s -> s.getState().equals(Server.State.AVAILABLE)).collect(Collectors.toList());
     }
 
-    private List<Server> getServers() {
+    public List<Server> getServers() {
         // Lazy loading
         if (servers == null) {
             servers = new ArrayList<Server>();
-            for (Node node : nodes) {
+            for (N node : getNodes()) {
                 if (node instanceof Server) {
                     servers.add((Server) node);
                 }
@@ -130,4 +130,10 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
     }
 
 
+    public N getById(int id) {
+        for(N node : this.getNodes()){
+            if(node.getId() == id) return node;
+        }
+        return null;
+    }
 }
