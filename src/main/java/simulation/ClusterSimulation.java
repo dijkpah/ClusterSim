@@ -107,10 +107,6 @@ public class ClusterSimulation {
                 logger.fine("Server woke up: " + server);
             }
 
-            if(server.getState().equals(Server.State.SHOULD_WAKE_UP)){
-                server.setState(Server.State.WAKING_UP);
-            }
-
             // If there is nothing on the server, let it fall asleep
             if(server.getState().equals(Server.State.AVAILABLE) && server.getNonMigratingVMs().size() == 0 && server.getReservedVMs().size() == 0){
                 server.setState(Server.State.FALLING_ASLEEP);
@@ -144,8 +140,6 @@ public class ClusterSimulation {
 
     private void executeMigration(Migration migration) {
         logger.finer(migration.toString());
-
-        logger.finer("Migration: " + migration);
 
         switch (migration.getTo().getState()){
             case AVAILABLE:
@@ -181,7 +175,7 @@ public class ClusterSimulation {
                 break;
             case SLEEPING:
                 // Wake up the server
-                migration.getTo().setState(Server.State.SHOULD_WAKE_UP);
+                migration.getTo().setState(Server.State.WAKING_UP);
                 logger.finer("Server is sleeping, waking up: " + migration.getTo());
                 break;
             default:

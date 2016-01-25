@@ -50,9 +50,10 @@ public class Server extends Node {
     public double getPowerUsage() {
         switch (getState()) {
             case AVAILABLE:
+                return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
             case FALLING_ASLEEP:
             case WAKING_UP:
-                return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
+                return MAX_POWER;
             case SLEEPING:
             default:
                 return 0;
@@ -124,7 +125,7 @@ public class Server extends Node {
 
     @Override
     public String toString() {
-        return "Server(id=" + id + ", cpu=" + getCPU() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ")";
+        return "Server(id=" + id + ", cpu=" + getCPU() + ", state=" + getState() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ", #runningVMs=" + getVms().size() + ", #reservedVMs=" + getReservedVMs().size() + ")";
     }
 
     @Override
