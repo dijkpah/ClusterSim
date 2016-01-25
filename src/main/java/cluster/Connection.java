@@ -17,8 +17,8 @@ public class Connection extends Path implements SimulationEntity{
     private int networkTraffic;
     private int applied;
 
-    public Connection(Type type, Node firstEndPoint, Node secondEndPoint) {
-        super(firstEndPoint, secondEndPoint);
+    public Connection(Type type, Cluster graph, Node firstEndPoint, Node secondEndPoint) {
+        super(graph, firstEndPoint, secondEndPoint);
         this.type = type;
         this.networkTraffic = 0;
         this.applied = 0;
