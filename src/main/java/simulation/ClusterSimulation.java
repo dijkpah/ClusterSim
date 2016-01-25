@@ -111,7 +111,7 @@ public class ClusterSimulation {
         params.put("Cable Capacity (Mbps)", ""+Params.CABLE_CAPACITY);
         params.put("Tick duration (s)", ""+Params.TICK_DURATION);
         params.put("Tick Count", ""+Params.TICK_COUNT);
-        params.put("Avg network traffic between a VM and the world (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_WORLD_AVERAGE);
+        params.put("Percentage network traffic between a VM and the world of bandwidth when 100% CPU", ""+Params.NETWORK_USAGE_VM_TO_WORLD_PERCENTAGE);
         params.put("Avg network traffic between connected VMs (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_VM_AVERAGE);
         params.put("Migration Policy", Params.MIGRATION_POLICY.toString());
 

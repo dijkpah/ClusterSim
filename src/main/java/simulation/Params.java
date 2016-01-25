@@ -15,6 +15,10 @@ public class Params {
      */
     public static final double INITIAL_VM_CPU_USAGE = 0.5;
     /**
+     * The possible percentage of CPU usage of a VM.
+     */
+    public static final double CPU_LOAD_POSSIBLE_MAX = 1.5;
+    /**
      * The standard deviation of the cpu load fluctuation
      */
     public static final double CPU_LOAD_FLUCTUATION_DEVIATION = 0.10;
@@ -29,11 +33,16 @@ public class Params {
     /**
      * The average network traffic in Mb/s between a VM and the world.
      */
-    public static final int NETWORK_USAGE_VM_TO_WORLD_AVERAGE = 100;
+    //public static final int NETWORK_USAGE_VM_TO_WORLD_AVERAGE = 100;
     /**
      * The average network traffic in Mb/s between connected VMs.
      */
     public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 50;
+
+    /**
+     * The percentage of the network usage of a vm to the world compared to the maximum bandwidth, when the CPULoad is 100%
+     */
+    public static final double NETWORK_USAGE_VM_TO_WORLD_PERCENTAGE = 0.5;
 
 
     public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.4);
@@ -44,4 +53,5 @@ public class Params {
     public static final String OUTPUT_FILE = "simulation.tsv";
     public static final String OUTPUT_SEPARATOR = "\t";
     public static final Level LOG_LEVEL = Level.ALL;
+
 }
