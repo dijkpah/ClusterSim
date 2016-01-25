@@ -44,7 +44,7 @@ public class ClusterFactory {
         }
 
         // Return the cluster
-        return new Cluster<>(world, nodes, edges);
+        return new Cluster<>("Simple empty cluster", world, nodes, edges);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ClusterFactory {
         VM vm5 = new M4XLargeVM(5);
 
         // Add VMs to server
-        server1.addVM(vm1);
+        server2.addVM(vm1);
         server2.addVM(vm2);
         server2.addVM(vm3);
         server2.addVM(vm4);
@@ -93,7 +93,7 @@ public class ClusterFactory {
         vm2.connectToVM(vm1);
 
         // Return the cluster
-        return new Cluster<Node, Cable>(world, nodes, edges);
+        return new Cluster<Node, Cable>("Simple cluster", world, nodes, edges);
     }
 
     /**

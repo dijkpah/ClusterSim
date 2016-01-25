@@ -1,4 +1,6 @@
-package simulation;
+package generators;
+
+import vm.VM;
 
 /**
  * Interface for generators of network traffic of VMs.
@@ -6,5 +8,5 @@ package simulation;
 public interface NetworkTrafficGenerator {
     public int generateBetweenVM(int previous, int max);
 
-    public int generateToWorld(int previous, int max);
+    public int generateToWorld(VM vm);
 }

@@ -98,7 +98,7 @@ public class ClusterTest {
 
         Cable cable1 = cluster.findEdge(server1, switch1);
         Cable cable2 = cluster.findEdge(server2, switch1);
-        
+
         assertEquals(23+29, cable1.getInternalCommunicationBandwidth());
         assertEquals(0, cable1.getMigrationBandwidth());
         assertEquals(13, cable1.getExternalCommunicationBandwidth());

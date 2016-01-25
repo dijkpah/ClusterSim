@@ -8,8 +8,7 @@ public class ClusterSimLogFormatter extends Formatter {
     public String format(LogRecord record) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(record.getLevel());
-        builder.append("\t");
+        builder.append(String.format("%1$-8s", record.getLevel()));
         builder.append(String.format("%1$-32s", record.getLoggerName()));
         builder.append(formatMessage(record));
         builder.append("\n");

@@ -1,6 +1,10 @@
 package vm;
 
 import cluster.Server;
+import generators.LoadGenerator;
+import generators.NetworkTrafficGenerator;
+import generators.NormalLoadGenerator;
+import generators.SimpleNetworkTrafficGenerator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -39,6 +43,8 @@ public abstract class VM implements SimulationEntity {
         return this.vCPUs * 100;
     }
 
+    public double CPULoad;
+
     /**
      * The amount of RAM, in GiB.
      */
@@ -74,30 +80,37 @@ public abstract class VM implements SimulationEntity {
         this.maxRAM = maxRAM;
         this.maxBandwidth = maxBandwidth;
         this.size = size;
-        this.CPU = (int) (Params.INITIAL_VM_CPU_USAGE * this.MAX_CPU());
+        this.CPULoad = Params.INITIAL_VM_CPU_USAGE;
         this.state = State.RUNNING;
         this.loadGenerator = new NormalLoadGenerator();
         this.networkTrafficGenerator = new SimpleNetworkTrafficGenerator();
         this.connectedVMs = new HashMap<VM, Integer>();
     }
 
-    private int CPU;
+    public int CPU(){
+        return (int) (this.MAX_CPU() * this.CPULoad);
+    }
+
+    public int getCPU(){
+        return CPU();
+    }
 
     /**
      * Fluctuate the load on this VM.
      */
     private void fluctuateLoad() {
-        this.CPU = (int) loadGenerator.generate(this.CPU, 0, this.MAX_CPU());
+        this.CPULoad = loadGenerator.generate(this.CPULoad, 0, Params.CPU_LOAD_POSSIBLE_MAX);
     }
 
     /**
      * Fluctuate the network traffic on this VM, both to the world and to connected VMs.
      */
     private void fluctuateNetworkTraffic() {
+        this.networkTrafficToWorld = this.networkTrafficGenerator.generateToWorld(this);
         for(Map.Entry<VM, Integer> entry : connectedVMs.entrySet()){
-            entry.setValue(this.networkTrafficGenerator.generateBetweenVM(entry.getValue(), this.getMaxBandwidth()));
+            entry.setValue(this.networkTrafficGenerator.generateBetweenVM(entry.getValue(), this.getMaxBandwidth() - this.networkTrafficToWorld));
         }
-        this.networkTrafficToWorld = this.networkTrafficGenerator.generateToWorld(this.networkTrafficToWorld, this.getMaxBandwidth());
+
     }
 
     /**
@@ -119,15 +132,12 @@ public abstract class VM implements SimulationEntity {
 
     }
 
-    public abstract VM createReservedSpace();
-
     public void setNetworkTrafficToVM(VM other, int networkTraffic) {
         connectedVMs.put(other, networkTraffic);
     }
 
     public enum State {
         RUNNING,
-        MIGRATING,
-        RESERVED
+        MIGRATING
     }
 }

@@ -5,10 +5,12 @@ import graph.Node;
 import graph.Path;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.ToString;
 import simulation.Params;
 import simulation.SimulationEntity;
 
 @Data
+@ToString(callSuper = true)
 public class Connection extends Path implements SimulationEntity{
 
     @NonNull private Type type;
