@@ -71,4 +71,8 @@ public class RandomMigrationPolicy implements MigrationPolicy{
         }
         return result;
     }
+
+    public String toString(){
+        return "Random migration policy with upper Threshold "+upperThreshold;
+    }
 }

@@ -10,8 +10,7 @@ import migration.Migration;
 import migration.MigrationPolicy;
 import vm.VM;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
@@ -105,6 +104,21 @@ public class ClusterSimulation {
         this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
     }
 
+    public Map<String, String> params(){
+        Map<String, String> params = new TreeMap<>();
+        params.put("Initial VM CPU Usage", ""+Params.INITIAL_VM_CPU_USAGE);
+        params.put("CPU load fluctuation deviation", ""+Params.CPU_LOAD_FLUCTUATION_DEVIATION);
+        params.put("Cable Capacity (Mbps)", ""+Params.CABLE_CAPACITY);
+        params.put("Tick duration (s)", ""+Params.TICK_DURATION);
+        params.put("Tick Count", ""+Params.TICK_COUNT);
+        params.put("Avg network traffic between a VM and the world (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_WORLD_AVERAGE);
+        params.put("Avg network traffic between connected VMs (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_VM_AVERAGE);
+        params.put("Migration Policy", Params.MIGRATION_POLICY.toString());
+
+
+        return params;
+    }
+
     private void executeMigration(Migration migration) {
         // Update the state of the VMs
         migration.getVm().setState(VM.State.MIGRATING);
@@ -158,7 +172,7 @@ public class ClusterSimulation {
         simulation.run(ticks);
 
         //Create Graph
-        simulation.getExcelLogger().makeGraph();
+        simulation.getExcelLogger().makeGraph(simulation.params());
     }
 
     public static void setupLogging() {

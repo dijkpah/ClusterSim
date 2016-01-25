@@ -3,8 +3,6 @@ package migration;
 import cluster.Cable;
 import cluster.Cluster;
 import cluster.Server;
-import graph.Edge;
-import graph.Graph;
 import graph.Node;
 import vm.VM;
 
@@ -28,5 +26,9 @@ public class NoMigrationPolicy implements MigrationPolicy{
     @Override
     public Set<VM> determineVMsToMigrate(Server server) {
         return null;
+    }
+
+    public String toString(){
+        return "No migrations";
     }
 }
