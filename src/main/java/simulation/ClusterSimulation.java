@@ -1,19 +1,21 @@
 package simulation;
 
-import cluster.*;
+import cluster.Cable;
+import cluster.Cluster;
+import cluster.Connection;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import switches.MainSwitch;
-import switches.Switch;
-import vm.M4LargeVM;
-import vm.M4XLargeVM;
 import vm.VM;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * A simulation of a cluster
@@ -38,10 +40,14 @@ public class ClusterSimulation {
     private List<Migration> currentMigrations = new ArrayList<>();
     private ExcelLogger excelLogger = new ExcelLogger();
 
-    /** The total number of migrations in the last tick */
+    /**
+     * The total number of migrations in the last tick
+     */
     private int totalMigrations;
 
-    /** The number of remaining (uncompleted) migrations in the last tick */
+    /**
+     * The number of remaining (uncompleted) migrations in the last tick
+     */
     private int remainingMigrations;
 
     /**
@@ -138,7 +144,6 @@ public class ClusterSimulation {
     }
 
 
-
     public static void main(String[] args) {
         // Setup logging
         setupLogging();
@@ -156,11 +161,11 @@ public class ClusterSimulation {
         simulation.getExcelLogger().makeGraph();
     }
 
-    private static void setupLogging(){
+    public static void setupLogging() {
         Logger globalLogger = LogManager.getLogManager().getLogger("");
         Handler handler = new ConsoleHandler();
         globalLogger.setLevel(Params.LOG_LEVEL);
-        for(Handler defaultHandler : globalLogger.getHandlers()){
+        for (Handler defaultHandler : globalLogger.getHandlers()) {
             globalLogger.removeHandler(defaultHandler);
         }
         handler.setLevel(Params.LOG_LEVEL);
