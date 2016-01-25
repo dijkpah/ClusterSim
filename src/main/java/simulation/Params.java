@@ -50,7 +50,8 @@ public class Params {
     public static final int TICK_COUNT = 20;
 
 
-    public static final String OUTPUT_FILE = "simulation.tsv";
+    public static final String OUTPUT_FILE_PREFIX = "simulation-";
+    public static final String OUTPUT_FILE_EXTENTION = "tsv";
     public static final String OUTPUT_SEPARATOR = "\t";
     public static final Level LOG_LEVEL = Level.ALL;
 

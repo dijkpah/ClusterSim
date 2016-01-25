@@ -190,20 +190,18 @@ public class CloudSimulation extends ClusterSimulation{
         }
 
         // Return the cluster
-        return new Cluster<Node, Cable>(world, nodes, edges);
+        return new Cluster<Node, Cable>("Simple cloud", world, nodes, edges);
     }
 
     public static void main(String[] args) {
-        // Setup logging
-        setupLogging();
-
         // Build the cluster
         Cluster<Node, Cable> cluster = simpleCloud();
 
-       // System.out.println(cluster);
-
         // Create the simulation
         CloudSimulation simulation = new CloudSimulation(cluster, Params.MIGRATION_POLICY);
+
+        // Setup logging
+        simulation.setupLogging();
 
         //Set time
         int ticks = Params.TICK_COUNT;
@@ -221,6 +219,6 @@ public class CloudSimulation extends ClusterSimulation{
         simulation.run(ticks);
 
         //Create Graph
-        simulation.getExcelLogger().makeGraph(params);
+        simulation.getExcelLogger().makeGraph(simulation.getOutputFileName(), params);
     }
 }

@@ -17,14 +17,15 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implements SimulationEntity {
+    private String name;
     private World world;
-
 
     private List<Connection> connections = new ArrayList<Connection>();
     private List<Server> servers;
 
-    public Cluster(World world, List<N> nodes, List<E> edges) {
+    public Cluster(String name, World world, List<N> nodes, List<E> edges) {
         super(nodes, edges);
+        this.name = name;
         this.world = world;
     }
 

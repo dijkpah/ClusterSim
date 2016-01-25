@@ -10,11 +10,9 @@ import migration.Migration;
 import migration.MigrationPolicy;
 import vm.VM;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * A simulation of a cluster
@@ -159,11 +157,11 @@ public class ClusterSimulation {
 
 
     public static void main(String[] args) {
-        // Setup logging
-        setupLogging();
-
         // Create the simulation
         ClusterSimulation simulation = new ClusterSimulation(Params.CLUSTER, Params.MIGRATION_POLICY);
+
+        // Setup logging
+        simulation.setupLogging();
 
         //Set time
         int ticks = Params.TICK_COUNT;
@@ -171,13 +169,27 @@ public class ClusterSimulation {
         // Start
         simulation.run(ticks);
 
-        //Create Graph
-        simulation.getExcelLogger().makeGraph(simulation.params());
+        // Create Graph
+        simulation.getExcelLogger().makeGraph(simulation.getOutputFileName(), simulation.params());
     }
 
-    public static void setupLogging() {
+    protected String getOutputFileName() {
+        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + "." + Params.OUTPUT_FILE_EXTENTION;
+    }
+
+    protected String getLogFileName() {
+        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + ".log";
+    }
+
+    public void setupLogging() {
         Logger globalLogger = LogManager.getLogManager().getLogger("");
-        Handler handler = new ConsoleHandler();
+        Handler handler = null;
+        try {
+            handler = new FileHandler(this.getLogFileName());
+        } catch (IOException e) {
+            e.printStackTrace();
+            handler = new ConsoleHandler();
+        }
         globalLogger.setLevel(Params.LOG_LEVEL);
         for (Handler defaultHandler : globalLogger.getHandlers()) {
             globalLogger.removeHandler(defaultHandler);

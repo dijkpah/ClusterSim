@@ -44,7 +44,7 @@ public class ClusterFactory {
         }
 
         // Return the cluster
-        return new Cluster<>(world, nodes, edges);
+        return new Cluster<>("Simple empty cluster", world, nodes, edges);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ClusterFactory {
         vm2.connectToVM(vm1);
 
         // Return the cluster
-        return new Cluster<Node, Cable>(world, nodes, edges);
+        return new Cluster<Node, Cable>("Simple cluster", world, nodes, edges);
     }
 
     /**

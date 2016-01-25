@@ -100,13 +100,13 @@ public class ExcelLogger {
         this.migrationNetworkUsage.add(migrationNetworkMbps);
     }
 
-    public void makeGraph(Map<String, String> params) {
+    public void makeGraph(String outputFileName, Map<String, String> params) {
         int ticks = serverConsumption.size();
 
         //Create file
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter(Params.OUTPUT_FILE, "UTF-8");
+            writer = new PrintWriter(outputFileName, "UTF-8");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -143,10 +143,4 @@ public class ExcelLogger {
         }
         writer.println();
     }
-
-    public static void main(String[] args) {
-        ExcelLogger logger = new ExcelLogger();
-        logger.makeGraph(new HashMap<>());
-    }
-
 }
