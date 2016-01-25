@@ -2,9 +2,12 @@ package simulation;
 
 import cluster.Cable;
 import cluster.Cluster;
+import cluster.ClusterFactory;
 import graph.Node;
 import migration.MigrationPolicy;
 import migration.RandomMigrationPolicy;
+
+import java.util.logging.Level;
 
 public class Params {
     /**
@@ -34,10 +37,11 @@ public class Params {
 
 
     public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.4);
-    public static final Cluster<Node,Cable> CLUSTER = ClusterSimulation.simpleCluster();
+    public static final Cluster<Node,Cable> CLUSTER = ClusterFactory.simpleCluster();
     public static final int TICK_COUNT = 20;
 
 
     public static final String OUTPUT_FILE = "simulation.tsv";
     public static final String OUTPUT_SEPARATOR = "\t";
+    public static final Level LOG_LEVEL = Level.ALL;
 }

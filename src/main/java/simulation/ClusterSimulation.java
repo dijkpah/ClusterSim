@@ -1,19 +1,21 @@
 package simulation;
 
-import cluster.*;
+import cluster.Cable;
+import cluster.Cluster;
+import cluster.Connection;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
 import migration.Migration;
 import migration.MigrationPolicy;
-import switches.MainSwitch;
-import switches.Switch;
-import vm.M4LargeVM;
-import vm.M4XLargeVM;
 import vm.VM;
 
-import java.util.*;
-import java.util.logging.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * A simulation of a cluster
@@ -38,10 +40,14 @@ public class ClusterSimulation {
     private List<Migration> currentMigrations = new ArrayList<>();
     private ExcelLogger excelLogger = new ExcelLogger();
 
-    /** The total number of migrations in the last tick */
+    /**
+     * The total number of migrations in the last tick
+     */
     private int totalMigrations;
 
-    /** The number of remaining (uncompleted) migrations in the last tick */
+    /**
+     * The number of remaining (uncompleted) migrations in the last tick
+     */
     private int remainingMigrations;
 
     /**
@@ -138,69 +144,6 @@ public class ClusterSimulation {
     }
 
 
-    /**
-     * Creates a simple cluster with one switch, two servers and one VM on both server.
-     */
-    public static Cluster<Node, Cable> simpleCluster() {
-        List<Node> nodes = new ArrayList<Node>();
-        List<Cable> edges = new ArrayList<Cable>();
-
-        // Create world
-        World world = new World(0);
-
-        Switch switch1 = new MainSwitch(1);
-
-        // Create servers
-        Server server1 = new Server(1);
-        Server server2 = new Server(2);
-
-        // Create VMs
-        VM vm1 = new M4LargeVM(1);
-        VM vm2 = new M4XLargeVM(2);
-        VM vm3 = new M4XLargeVM(3);
-        VM vm4 = new M4XLargeVM(4);
-        VM vm5 = new M4XLargeVM(5);
-
-        // Add VMs to server
-        server1.addVM(vm1);
-        server2.addVM(vm2);
-        server2.addVM(vm3);
-        server2.addVM(vm4);
-        server2.addVM(vm5);
-
-        // Add nodes
-        nodes.add(world);
-        nodes.add(switch1);
-        nodes.add(server1);
-        nodes.add(server2);
-
-        // Create edges
-        edges.add(createCable(server1, switch1));
-        edges.add(createCable(server2, switch1));
-        edges.add(createCable(switch1, world));
-
-        // Vms are linked
-        vm1.connectToVM(vm2);
-        vm2.connectToVM(vm1);
-
-        // Return the cluster
-        return new Cluster<Node, Cable>(world, nodes, edges);
-    }
-
-    /**
-     * Create a new cable between the two nodes.
-     *
-     * @param node1 The first node.
-     * @param node2 The second node.
-     * @return A Cable between the nodes.
-     */
-    public static Cable createCable(Node node1, Node node2) {
-        Cable cable = new Cable(node1, node2, Params.CABLE_CAPACITY);
-        node1.addEdge(cable);
-        node2.addEdge(cable);
-        return cable;
-    }
-
     public static void main(String[] args) {
         // Setup logging
         setupLogging();
@@ -218,14 +161,14 @@ public class ClusterSimulation {
         simulation.getExcelLogger().makeGraph();
     }
 
-    public static void setupLogging(){
+    public static void setupLogging() {
         Logger globalLogger = LogManager.getLogManager().getLogger("");
         Handler handler = new ConsoleHandler();
-        globalLogger.setLevel(Level.INFO);
-        for(Handler defaultHandler : globalLogger.getHandlers()){
+        globalLogger.setLevel(Params.LOG_LEVEL);
+        for (Handler defaultHandler : globalLogger.getHandlers()) {
             globalLogger.removeHandler(defaultHandler);
         }
-        handler.setLevel(Level.INFO);
+        handler.setLevel(Params.LOG_LEVEL);
         handler.setFormatter(new ClusterSimLogFormatter());
         globalLogger.addHandler(handler);
     }
