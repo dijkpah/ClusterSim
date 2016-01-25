@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 public class ExcelLogger {
@@ -40,64 +41,59 @@ public class ExcelLogger {
     private List<Integer> internalNetworkUsage = new ArrayList<>(Params.TICK_COUNT);
     /** The network traffic in Mb/s for migration traffic */
     private List<Integer> migrationNetworkUsage = new ArrayList<>(Params.TICK_COUNT);
+    /** The list of counts of servers which are in a specific state */
+    private List<Map<Server.State, Integer>> serverStates = new ArrayList<>(Params.TICK_COUNT);
 
 
     public void tick(ClusterSimulation simulation) {
-        int serverConsumption = 0;
-        int baseSwitchConsumption = 0;
-        int externalNetworkConsumption = 0;
-        int internalNetworkConsumption = 0;
-        int migrationNetworkConsumption = 0;
-
-        int externalNetworkMbps = 0;
-        int internalNetworkMbps = 0;
-        int migrationNetworkMbps = 0;
+        int tickServerConsumption = 0;
+        int tickBaseSwitchConsumption = 0;
+        int tickExternalNetworkConsumption = 0;
+        int tickInternalNetworkConsumption = 0;
+        int tickMigrationNetworkConsumption = 0;
+        int tickExternalNetworkUsage = 0;
+        int tickInternalNetworkUsage = 0;
+        int tickMigrationNetworkUsage = 0;
+        Map<Server.State, Integer> tickServerStates = new HashMap<>();
 
 
         for (Node node : simulation.getCluster().getNodes()) {
             if (node instanceof Server) {
-                serverConsumption += ((Server) node).getPowerUsage();
+                Server server = (Server) node;
+                tickServerConsumption += server.getPowerUsage();
+                if(!tickServerStates.containsKey(server.getState())){
+                    tickServerStates.put(server.getState(), 1);
+                }else{
+                    tickServerStates.put(server.getState(), tickServerStates.get(server.getState()) + 1);
+                }
             } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
-                baseSwitchConsumption += aSwitch.getBaseConsumption();
-                externalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
-                internalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
-                migrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
+                tickBaseSwitchConsumption += aSwitch.getBaseConsumption();
+                tickExternalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
+                tickInternalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
+                tickMigrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
             } else if (!(node instanceof World)) {
                 new Exception("unknown Node type: " + node.getClass().getName()).printStackTrace();
             }
         }
         for(Cable cable : simulation.getCluster().getEdges()){
-            externalNetworkMbps += cable.getExternalCommunicationBandwidth();
-            internalNetworkMbps += cable.getInternalCommunicationBandwidth();
-            migrationNetworkMbps += cable.getMigrationBandwidth();
+            tickExternalNetworkUsage += cable.getExternalCommunicationBandwidth();
+            tickInternalNetworkUsage += cable.getInternalCommunicationBandwidth();
+            tickMigrationNetworkUsage += cable.getMigrationBandwidth();
         }
 
-        this.addTick(
-                serverConsumption,
-                baseSwitchConsumption,
-                externalNetworkConsumption,
-                internalNetworkConsumption,
-                migrationNetworkConsumption,
-                simulation.getTotalMigrations(),
-                simulation.getRemainingMigrations(),
-                externalNetworkMbps,
-                internalNetworkMbps,
-                migrationNetworkMbps
-        );
-    }
 
-    public void addTick(int server, int switchBase, int external, int internal, int migration, int totalMigrations, int remainingMigrations, int externalNetworkMbps, int internalNetworkMbps, int migrationNetworkMbps) {
-        this.serverConsumption.add(server);
-        this.baseSwitchConsumption.add(switchBase);
-        this.externalNetworkConsumption.add(external);
-        this.internalNetworkConsumption.add(internal);
-        this.migrationNetworkConsumption.add(migration);
-        this.totalMigrations.add(totalMigrations);
-        this.remainingMigrations.add(remainingMigrations);
-        this.externalNetworkUsage.add(externalNetworkMbps);
-        this.internalNetworkUsage.add(internalNetworkMbps);
-        this.migrationNetworkUsage.add(migrationNetworkMbps);
+        this.serverConsumption.add(tickServerConsumption);
+        this.baseSwitchConsumption.add(tickBaseSwitchConsumption);
+        this.externalNetworkConsumption.add(tickExternalNetworkConsumption);
+        this.internalNetworkConsumption.add(tickInternalNetworkConsumption);
+        this.migrationNetworkConsumption.add(tickMigrationNetworkConsumption);
+        this.totalMigrations.add(simulation.getTotalMigrations());
+        this.remainingMigrations.add(simulation.getRemainingMigrations());
+        this.externalNetworkUsage.add(tickExternalNetworkUsage);
+        this.internalNetworkUsage.add(tickInternalNetworkUsage);
+        this.migrationNetworkUsage.add(tickMigrationNetworkUsage);
+        this.serverStates.add(tickServerStates);
     }
 
     public void makeGraph(String outputFileName, Map<String, String> params) {
@@ -124,6 +120,12 @@ public class ExcelLogger {
         this.printStats(writer, "Network Bandwidth - Migrations (Mbps)       ", migrationNetworkUsage);
         this.printStats(writer, "Migrations                                  ", totalMigrations);
         this.printStats(writer, "Unfinished migrations                       ", remainingMigrations);
+        for(Server.State state : Server.State.values()){
+            this.printStats(writer, String.format("%1$-44s", "Server state - " + state), serverStates.stream().map(
+                item -> item.containsKey(state) ? item.get(state) : 0
+            ).collect(Collectors.toList()));
+        }
+
 
         writer.close();
     }
