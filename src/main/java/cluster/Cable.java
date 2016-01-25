@@ -36,7 +36,7 @@ public class Cable extends Edge {
     }
 
     public String toString(){
-        return "Cable(1="+this.getFirstNode().getId()+", 2="+this.getSecondNode().getId() + ", external=" + externalCommunicationBandwidth + ", internal=" + internalCommunicationBandwidth + ", migration=" + migrationBandwidth + ")";
+        return "Cable(first="+this.getFirstNode().getId()+", second="+this.getSecondNode().getId() + ", external=" + externalCommunicationBandwidth + ", internal=" + internalCommunicationBandwidth + ", migration=" + migrationBandwidth + ")";
     }
 
     public void reset() {

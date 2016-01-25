@@ -2,6 +2,7 @@ package cluster;
 
 import graph.Node;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import vm.VM;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class Server extends Node {
     private final static Logger logger = Logger.getLogger(Server.class.getName());
 
