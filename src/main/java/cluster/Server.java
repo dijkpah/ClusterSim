@@ -114,7 +114,7 @@ public class Server extends Node {
      */
     public int getRunningCPU() {
         int total = 0;
-        for (VM vm : getRunningVMs()) {
+        for (VM vm : getNonMigratingVMs()) {
             total += vm.getCPU();
         }
         return total;
@@ -153,9 +153,9 @@ public class Server extends Node {
     }
 
     /**
-     * Get all VMs which are not migrating and not reserved space.
+     * Get all VMs which are not migrating.
      */
-    public List<VM> getRunningVMs() {
+    public List<VM> getNonMigratingVMs() {
         return vms.stream().filter(vm -> vm.getState().equals(VM.State.RUNNING)).collect(Collectors.toList());
     }
 

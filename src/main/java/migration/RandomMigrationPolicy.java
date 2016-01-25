@@ -49,7 +49,7 @@ public class RandomMigrationPolicy extends MigrationPolicy {
 
             result = new HashSet<>();
 
-            while(server.getRunningVMs().size() > 1 && server.getRunningCPU() > server.MAX_CPU*upperThreshold){
+            while(server.getNonMigratingVMs().size() > 1 && server.getRunningCPU() > server.MAX_CPU*upperThreshold){
                 // Pick one with largest CPU
                 VM bestVM = null;
                 for(VM vm : server.getVms()){
