@@ -1,9 +1,6 @@
 package simulation;
 
-import cluster.Cable;
-import cluster.Cluster;
-import cluster.Server;
-import cluster.World;
+import cluster.*;
 import graph.Node;
 import lombok.Data;
 import migration.MigrationPolicy;
@@ -89,32 +86,32 @@ public class CloudSimulation extends ClusterSimulation{
                 Server server = new Server(100+i*100+j);
                 racks[i].add(server);
                 nodes.add(server); //add server to graph
-                edges.add(createCable(server, tors[i])); //add edge to this rack's TOR switch
+                edges.add(ClusterFactory.createCable(server, tors[i])); //add edge to this rack's TOR switch
             }
         }
 
         // Create edges
         // Link world to primary switches
-        edges.add(createCable(prim1, world));
-        edges.add(createCable(prim2, world));
+        edges.add(ClusterFactory.createCable(prim1, world));
+        edges.add(ClusterFactory.createCable(prim2, world));
         // Link hubs to primary switches
-        edges.add(createCable(hub1, prim1));
-        edges.add(createCable(hub2, prim1));
-        edges.add(createCable(hub3, prim1));
-        edges.add(createCable(hub4, prim1));
-        edges.add(createCable(hub1, prim2));
-        edges.add(createCable(hub2, prim2));
-        edges.add(createCable(hub3, prim2));
-        edges.add(createCable(hub4, prim2));
+        edges.add(ClusterFactory.createCable(hub1, prim1));
+        edges.add(ClusterFactory.createCable(hub2, prim1));
+        edges.add(ClusterFactory.createCable(hub3, prim1));
+        edges.add(ClusterFactory.createCable(hub4, prim1));
+        edges.add(ClusterFactory.createCable(hub1, prim2));
+        edges.add(ClusterFactory.createCable(hub2, prim2));
+        edges.add(ClusterFactory.createCable(hub3, prim2));
+        edges.add(ClusterFactory.createCable(hub4, prim2));
         // Link hubs to TORs
-        edges.add(createCable(hub1, tor1));
-        edges.add(createCable(hub2, tor1));
-        edges.add(createCable(hub1, tor2));
-        edges.add(createCable(hub2, tor2));
-        edges.add(createCable(hub3, tor3));
-        edges.add(createCable(hub4, tor3));
-        edges.add(createCable(hub3, tor4));
-        edges.add(createCable(hub4, tor4));
+        edges.add(ClusterFactory.createCable(hub1, tor1));
+        edges.add(ClusterFactory.createCable(hub2, tor1));
+        edges.add(ClusterFactory.createCable(hub1, tor2));
+        edges.add(ClusterFactory.createCable(hub2, tor2));
+        edges.add(ClusterFactory.createCable(hub3, tor3));
+        edges.add(ClusterFactory.createCable(hub4, tor3));
+        edges.add(ClusterFactory.createCable(hub3, tor4));
+        edges.add(ClusterFactory.createCable(hub4, tor4));
 
 
 
