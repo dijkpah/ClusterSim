@@ -167,18 +167,18 @@ public class CloudSimulation extends ClusterSimulation{
                 }
             }
         }
-        System.out.println("[INFO] Created VMs: "+createdVMs);
+       // System.out.println("[INFO] Created VMs: "+createdVMs);
 
         //Create seeded RNG
         Random rng = new Random(0L);
 
         // Vms are linked
-        for(int i=0;i<createdVMs*fractionInGroup;i++){
+        for(int i=0;i<createdVMs*fractionInGroup;i+=groupSize){
             //create new group
             List<VM> group = new ArrayList<>();
             for(int j=0;j<groupSize;j++){
                 //add a VM to group
-                int index = rng.nextInt(createdVMs);
+                int index = rng.nextInt(vms.size());
                 VM selectedVM = vms.get(index);
                 group.add(selectedVM);
 
@@ -203,13 +203,13 @@ public class CloudSimulation extends ClusterSimulation{
         // Build the cluster
         Cluster<Node, Cable> cluster = simpleCloud();
 
-        System.out.println(cluster);
+       // System.out.println(cluster);
 
         // Create the simulation
         CloudSimulation simulation = new CloudSimulation(cluster, Params.MIGRATION_POLICY);
 
         //Set time
-        int ticks = 15;
+        int ticks = Params.TICK_COUNT;
 
         // Start
         simulation.run(ticks);
