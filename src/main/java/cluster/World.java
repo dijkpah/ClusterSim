@@ -1,7 +1,9 @@
 package cluster;
 
 import graph.Node;
+import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode(callSuper = true)
 public class World extends Node {
 
     public World(int id) {

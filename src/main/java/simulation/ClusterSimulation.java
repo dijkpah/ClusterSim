@@ -126,6 +126,11 @@ public class ClusterSimulation {
 
         // Get the connection
         Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
+
+        if(connection == null || connection.getEdges() == null || connection.getEdges().size() == 0){
+            throw new RuntimeException("I can't execute an impossible migration! " + connection);
+        }
+
         // Determine remaining bandwidth
         int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
         // Use all remaining bandwidth

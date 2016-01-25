@@ -34,6 +34,7 @@ public class RandomMigrationPolicy implements MigrationPolicy{
                     for(VM vm : toMigrate){
                         VM target = vm.createReservedSpace();
                         Server targetServer = allocateVM(target, cluster);
+
                         result.add(new Migration(server, targetServer, vm, target, 0));
                     }
                 }
@@ -49,7 +50,15 @@ public class RandomMigrationPolicy implements MigrationPolicy{
 
         List<Server> possibleServers = cluster.getPossibleTargetServers();
 
-        return possibleServers.size() > 0 ? possibleServers.get(random.nextInt(possibleServers.size())) : null;
+        Server target = null;
+        if(possibleServers.size() > 0){
+            // Make sure it is not the same server
+            while(target==null || target.equals(vm.getServer())){
+                target =  possibleServers.get(random.nextInt(possibleServers.size()));
+            }
+        }
+
+        return target;
     }
 
     @Override
