@@ -1,6 +1,10 @@
 package vm;
 
 import cluster.Server;
+import generators.LoadGenerator;
+import generators.NetworkTrafficGenerator;
+import generators.NormalLoadGenerator;
+import generators.SimpleNetworkTrafficGenerator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;

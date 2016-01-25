@@ -1,5 +1,7 @@
-package simulation;
+package generators;
 
+import generators.NetworkTrafficGenerator;
+import simulation.Params;
 import vm.VM;
 
 /**

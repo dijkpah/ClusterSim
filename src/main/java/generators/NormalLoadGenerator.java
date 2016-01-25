@@ -1,6 +1,8 @@
-package simulation;
+package generators;
 
+import generators.LoadGenerator;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import simulation.Params;
 
 public class NormalLoadGenerator implements LoadGenerator {
 

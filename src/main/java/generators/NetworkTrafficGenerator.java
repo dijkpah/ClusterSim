@@ -1,4 +1,4 @@
-package simulation;
+package generators;
 
 import vm.VM;
 
