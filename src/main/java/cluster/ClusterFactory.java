@@ -71,7 +71,7 @@ public class ClusterFactory {
         VM vm5 = new M4XLargeVM(5);
 
         // Add VMs to server
-        server1.addVM(vm1);
+        server2.addVM(vm1);
         server2.addVM(vm2);
         server2.addVM(vm3);
         server2.addVM(vm4);

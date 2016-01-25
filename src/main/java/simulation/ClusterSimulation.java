@@ -3,6 +3,7 @@ package simulation;
 import cluster.Cable;
 import cluster.Cluster;
 import cluster.Connection;
+import cluster.Server;
 import graph.Node;
 import lombok.Data;
 import lombok.NonNull;
@@ -64,44 +65,59 @@ public class ClusterSimulation {
             // This mainly resets the traffic on the cables
             cluster.reset();
 
-            // Step 1 and 2 happen at the start of the tick,
+            // The idea is that all calculations are executed at the start of the tick
+            // (updating load, determination of migrations, deciding which server to let sleep or wake up)
+            // while the remaining time of the tick is spent for the network traffic and the waking up/falling asleep of servers
 
-            // Step 1: Update load and network traffic
+            // Step 1: Update server states
+            updateServerStates();
+
+            // Step 2: Update load and network traffic and apply this to the network
             cluster.tick();
 
-            // Step 2: Determine migrations
+            // Step 3: Determine migrations
             currentMigrations.addAll(migrationPolicy.update(cluster));
 
-            // Step 3: Apply migrations
+            // Step 4: Apply migrations to the network
             setTotalMigrations(currentMigrations.size());
             executeMigrations();
             setRemainingMigrations(currentMigrations.size());
 
+            // Do some logging
             logger.finer("Total migrations: " + getTotalMigrations());
             logger.finer("Remaining migrations: " + getRemainingMigrations());
             logger.finer("Edges: " + cluster.getEdges());
 
-            // Update states of servers
-
-            // Update connections of migrated VMS
-
             // Update the log
             updateLog();
+
+            // Increase the clock
             clock++;
         }
     }
 
-    private void executeMigrations() {
-        logger.fine("Executing migrations");
+    private void updateServerStates() {
+        for(Server server : cluster.getServers()){
+            if(server.getState().equals(Server.State.FALLING_ASLEEP)){
+                server.setState(Server.State.SLEEPING);
+            }
 
-        for (Migration migration : currentMigrations) {
-            executeMigration(migration);
+            if(server.getState().equals(Server.State.WAKING_UP)){
+                server.setState(Server.State.AVAILABLE);
+                logger.fine("Server woke up: " + server);
+            }
+
+            if(server.getState().equals(Server.State.SHOULD_WAKE_UP)){
+                server.setState(Server.State.WAKING_UP);
+            }
+
+            // If there is nothing on the server, let it fall asleep
+            if(server.getState().equals(Server.State.AVAILABLE) && server.getNonMigratingVMs().size() == 0 && server.getReservedVMs().size() == 0){
+                server.setState(Server.State.FALLING_ASLEEP);
+                logger.fine("Letting server falling asleep: " + server);
+            }
         }
-
-        // Remove finished migrations
-        this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
     }
-
     public Map<String, String> params(){
         Map<String, String> params = new TreeMap<>();
         params.put("Initial VM CPU Usage", ""+Params.INITIAL_VM_CPU_USAGE);
@@ -117,37 +133,63 @@ public class ClusterSimulation {
         return params;
     }
 
+    private void executeMigrations() {
+        logger.fine("Executing migrations");
+
+        for (Migration migration : currentMigrations) {
+            executeMigration(migration);
+        }
+
+        // Remove finished migrations
+        this.currentMigrations.removeIf(m -> m.getTransferredData() >= m.getVm().getSize());
+    }
+
     private void executeMigration(Migration migration) {
         logger.finer(migration.toString());
 
-        // Get the connection
-        Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
+        logger.finer("Migration: " + migration);
 
-        if(connection == null || connection.getEdges() == null || connection.getEdges().size() == 0){
-            throw new RuntimeException("I can't execute an impossible migration! " + connection);
-        }
+        switch (migration.getTo().getState()){
+            case AVAILABLE:
+                // Get the connection
+                Connection connection = cluster.getConnection(Connection.Type.MIGRATION, migration.getFrom(), migration.getTo());
 
-        // Determine remaining bandwidth
-        int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
-        // Determine used bandwidth and make sure it is rounded up (otherwise there is a small remaining fraction of the VM still in need of transfer).
-        bandwidth = Math.min(bandwidth, (int)Math.ceil((migration.getVm().getSize() - migration.getTransferredData())/(double)Params.TICK_DURATION));
-        // Use this bandwidth
-        connection.addNetworkTraffic(bandwidth);
-        // Update the cables
-        connection.applyNetworkTraffic();
-        // Determine transferred bytes
-        migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
+                if(connection == null || connection.getEdges() == null || connection.getEdges().size() == 0){
+                    throw new RuntimeException("I can't execute an impossible migration! " + connection);
+                }
+
+                // Determine remaining bandwidth
+                int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
+                // Determine used bandwidth and make sure it is rounded up (otherwise there is a small remaining fraction of the VM still in need of transfer).
+                bandwidth = Math.min(bandwidth, (int)Math.ceil((migration.getVm().getSize() - migration.getTransferredData())/(double)Params.TICK_DURATION));
+                // Use this bandwidth
+                connection.addNetworkTraffic(bandwidth);
+                // Update the cables
+                connection.applyNetworkTraffic();
+                // Determine transferred bytes
+                migration.setTransferredData(migration.getTransferredData() + Params.TICK_DURATION * bandwidth);
 
 
-        // If all data is transferred, the migration is completed
-        //logger.fine(migration.getTransferredData());
-        //logger.fine(migration.getVm().getSize());
-        if (migration.isCompleted()) {
-            logger.finer("Migration completed: " + migration);
-            migration.getFrom().removeVM(migration.getVm());
-            migration.getTo().removeReservedVM(migration.getVm());
-            migration.getTo().addVM(migration.getVm());
-            migration.getVm().setState(VM.State.RUNNING);
+                // If all data is transferred, the migration is completed
+                //logger.fine(migration.getTransferredData());
+                //logger.fine(migration.getVm().getSize());
+                if (migration.isCompleted()) {
+                    logger.finer("Migration completed!");
+                    migration.getFrom().removeVM(migration.getVm());
+                    migration.getTo().removeReservedVM(migration.getVm());
+                    migration.getTo().addVM(migration.getVm());
+                    migration.getVm().setState(VM.State.RUNNING);
+                }
+                break;
+            case SLEEPING:
+                // Wake up the server
+                migration.getTo().setState(Server.State.SHOULD_WAKE_UP);
+                logger.finer("Server is sleeping, waking up: " + migration.getTo());
+                break;
+            default:
+                // otherwise: wait until the server is sleeping or
+                logger.finer("Can't do anything right now, server is not available or sleeping");
+                break;
         }
     }
 

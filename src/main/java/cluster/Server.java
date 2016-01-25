@@ -50,6 +50,8 @@ public class Server extends Node {
     public double getPowerUsage() {
         switch (getState()) {
             case AVAILABLE:
+            case FALLING_ASLEEP:
+            case WAKING_UP:
                 return MIN_POWER + ((double) this.getCPU() / MAX_CPU) * (MAX_POWER - MIN_POWER);
             case SLEEPING:
             default:
@@ -167,8 +169,15 @@ public class Server extends Node {
         this.reservedVMs.remove(vm);
     }
 
+    public void fallAsleep() {
+        this.setState(State.FALLING_ASLEEP);
+    }
+
     public enum State {
         SLEEPING,
+        FALLING_ASLEEP,
+        SHOULD_WAKE_UP,
+        WAKING_UP,
         AVAILABLE
     }
 
