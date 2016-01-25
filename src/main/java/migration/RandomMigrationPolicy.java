@@ -27,11 +27,11 @@ public class RandomMigrationPolicy extends MigrationPolicy {
         Random random = new Random();
 
         // Get all possible targets
-        List<Server> possibleServers = cluster.getPossibleTargetServers();
+        List<Server> possibleServers = cluster.getServers();
 
         // Find a target if there are possible targets
         Server target = null;
-        if(possibleServers.size() > 0){
+        if(possibleServers.size() > 0 && !(possibleServers.size()==1 && possibleServers.get(0).equals(vm.getServer()))){
             // Make sure it is not the same server
             while(target==null || target.equals(vm.getServer())){
                 target =  possibleServers.get(random.nextInt(possibleServers.size()));
