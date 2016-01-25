@@ -6,16 +6,18 @@ import cluster.Server;
 import cluster.World;
 import graph.Node;
 import lombok.Data;
-import migration.RandomMigrationPolicy;
+import migration.MigrationPolicy;
 import switches.HubSwitch;
 import switches.MainSwitch;
 import switches.TORSwitch;
 import vm.M42XLargeVM;
 import vm.M4LargeVM;
 import vm.M4XLargeVM;
+import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -26,8 +28,8 @@ import java.util.stream.IntStream;
 public class CloudSimulation extends ClusterSimulation{
 
 
-    public CloudSimulation(Cluster<Node, Cable> cluster, RandomMigrationPolicy randomMigrationPolicy) {
-        super(cluster, randomMigrationPolicy);
+    public CloudSimulation(Cluster<Node, Cable> cluster, MigrationPolicy migrationPolicy) {
+        super(cluster, migrationPolicy);
     }
 
     /**
@@ -38,6 +40,8 @@ public class CloudSimulation extends ClusterSimulation{
         int nthServerSleeps = 5;//every nth server is put to sleep
         int amountOfRacks = 4;
         int serversPerRack = 20;
+        double fractionInGroup = 0.5;
+        int groupSize = 4;
 
         List<Node> nodes = new ArrayList<Node>();
         List<Cable> edges = new ArrayList<Cable>();
@@ -125,6 +129,8 @@ public class CloudSimulation extends ClusterSimulation{
         //Create VMs
         int counter = 0;
         int createdVMs = 0;
+        List<VM> vms = new ArrayList<>();
+
         for(int i= 0;i<amountOfRacks;i++){
             for(int j=0;j<serversPerRack;j++){
                 int index = i*serversPerRack+j;
@@ -136,15 +142,21 @@ public class CloudSimulation extends ClusterSimulation{
                     for(int k:combinations[combinationsIndex]){
                         switch(k){
                             case 2:
-                                server.addVM(new M4LargeVM(createdVMs));
+                                VM smallVm = new M4LargeVM(createdVMs);
+                                vms.add(smallVm);
+                                server.addVM(smallVm);
                                 createdVMs++;
                                 break;
                             case 4:
-                                server.addVM(new M4XLargeVM(createdVMs));
+                                VM medVM = new M4XLargeVM(createdVMs);
+                                vms.add(medVM);
+                                server.addVM(medVM);
                                 createdVMs++;
                                 break;
                             case 8:
-                                server.addVM(new M42XLargeVM(createdVMs));
+                                VM largeVM = new M42XLargeVM(createdVMs);
+                                vms.add(largeVM);
+                                server.addVM(largeVM);
                                 createdVMs++;
                                 break;
                             default:
@@ -155,37 +167,46 @@ public class CloudSimulation extends ClusterSimulation{
                 }
             }
         }
-        System.out.println("[BLAAT]"+createdVMs);
+        System.out.println("[INFO] Created VMs: "+createdVMs);
+
+        //Create seeded RNG
+        Random rng = new Random(0L);
+
         // Vms are linked
-//        vm1.connectToVM(vm2);
-//        vm2.connectToVM(vm1);
+        for(int i=0;i<createdVMs*fractionInGroup;i++){
+            //create new group
+            List<VM> group = new ArrayList<>();
+            for(int j=0;j<groupSize;j++){
+                //add a VM to group
+                int index = rng.nextInt(createdVMs);
+                VM selectedVM = vms.get(index);
+                group.add(selectedVM);
+
+                //remove VM from vms
+                vms.remove(index);
+
+                //connect vms in group to each other
+                for(VM vm : vms){
+                    selectedVM.connectToVM(vm);
+                }
+            }
+        }
 
         // Return the cluster
         return new Cluster<Node, Cable>(world, nodes, edges);
     }
 
-    /**
-     * Create a new cable between the two nodes.
-     *
-     * @param node1 The first node.
-     * @param node2 The second node.
-     * @return A Cable between the nodes.
-     */
-    private static Cable createCable(Node node1, Node node2) {
-        Cable cable = new Cable(node1, node2, Params.CABLE_CAPACITY);
-        node1.addEdge(cable);
-        node2.addEdge(cable);
-        return cable;
-    }
-
     public static void main(String[] args) {
+        // Setup logging
+        setupLogging();
+
         // Build the cluster
         Cluster<Node, Cable> cluster = simpleCloud();
 
         System.out.println(cluster);
 
         // Create the simulation
-        CloudSimulation simulation = new CloudSimulation(cluster, new RandomMigrationPolicy(0.3));
+        CloudSimulation simulation = new CloudSimulation(cluster, Params.MIGRATION_POLICY);
 
         //Set time
         int ticks = 15;

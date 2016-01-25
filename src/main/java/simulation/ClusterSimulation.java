@@ -194,7 +194,7 @@ public class ClusterSimulation {
      * @param node2 The second node.
      * @return A Cable between the nodes.
      */
-    private static Cable createCable(Node node1, Node node2) {
+    public static Cable createCable(Node node1, Node node2) {
         Cable cable = new Cable(node1, node2, Params.CABLE_CAPACITY);
         node1.addEdge(cable);
         node2.addEdge(cable);
@@ -218,7 +218,7 @@ public class ClusterSimulation {
         simulation.getExcelLogger().makeGraph();
     }
 
-    private static void setupLogging(){
+    public static void setupLogging(){
         Logger globalLogger = LogManager.getLogManager().getLogger("");
         Handler handler = new ConsoleHandler();
         globalLogger.setLevel(Level.INFO);
