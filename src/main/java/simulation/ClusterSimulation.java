@@ -114,8 +114,6 @@ public class ClusterSimulation {
         params.put("Avg network traffic between a VM and the world (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_WORLD_AVERAGE);
         params.put("Avg network traffic between connected VMs (Mbps)", ""+Params.NETWORK_USAGE_VM_TO_VM_AVERAGE);
         params.put("Migration Policy", Params.MIGRATION_POLICY.toString());
-
-
         return params;
     }
 
