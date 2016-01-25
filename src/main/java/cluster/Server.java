@@ -177,7 +177,6 @@ public class Server extends Node {
     public enum State {
         SLEEPING,
         FALLING_ASLEEP,
-        SHOULD_WAKE_UP,
         WAKING_UP,
         AVAILABLE
     }
