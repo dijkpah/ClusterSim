@@ -60,7 +60,7 @@ public class ClusterSimulation {
 
         clock = 0;
         while (clock < ticks) {
-            logger.fine("== TICK " + clock + " ==");
+            logger.info("== TICK " + clock + " ==");
 
             // Reset the cluster for the new tick
             // This mainly resets the traffic on the cables
