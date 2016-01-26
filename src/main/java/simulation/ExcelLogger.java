@@ -55,6 +55,8 @@ public class ExcelLogger {
      */
     private List<Map<Integer, Integer>> reservedVMs = new ArrayList<>(Params.TICK_COUNT);
 
+    private List<Map<Integer, Double>> cpuLoads = new ArrayList<>(Params.TICK_COUNT);
+
     public ExcelLogger(ClusterSimulation simulation){
         this.simulation = simulation;
     }
@@ -72,7 +74,7 @@ public class ExcelLogger {
         Map<Server.State, Integer> tickServerStates = new HashMap<>();
         Map<Integer, Integer> tickRunningVMs = new HashMap<>();
         Map<Integer, Integer> tickReservedVMs = new HashMap<>();
-
+        Map<Integer, Double> tickCpuLoads = new HashMap<>();
 
         for (Node node : simulation.getCluster().getNodes()) {
             if (node instanceof Server) {
@@ -91,6 +93,7 @@ public class ExcelLogger {
                 // Number of VMs
                 tickRunningVMs.put(server.getId(), server.getVms().size());
                 tickReservedVMs.put(server.getId(), server.getReservedVMs().size());
+                tickCpuLoads.put(server.getId(), server.getCPU() / (double) server.MAX_CPU);
             } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
                 tickBaseSwitchConsumption += aSwitch.getBaseConsumption();
@@ -121,6 +124,7 @@ public class ExcelLogger {
         this.serverStates.add(tickServerStates);
         this.runningVMs.add(tickRunningVMs);
         this.reservedVMs.add(tickReservedVMs);
+        this.cpuLoads.add(tickCpuLoads);
     }
 
     public void makeGraph(String outputFileName, Map<String, String> params) {
@@ -162,6 +166,12 @@ public class ExcelLogger {
             ).collect(Collectors.toList()));
         }
 
+        for(Server server : simulation.getCluster().getServers()){
+            this.printStats(writer, String.format("%1$-44s", "Server " + server.getId() + " - CPULoad"), cpuLoads.stream().map(
+                    item -> item.get(server.getId())
+            ).collect(Collectors.toList()));
+        }
+
 
         writer.close();
     }
@@ -174,11 +184,13 @@ public class ExcelLogger {
         }
     }
 
-    private void printStats(PrintWriter writer, String name, List<Integer> values) {
+    private <E> void printStats(PrintWriter writer, String name, List<E> values) {
         writer.print(name + Params.OUTPUT_SEPARATOR);
-        for (Integer value : values) {
+        for (E value : values) {
             writer.print(value + Params.OUTPUT_SEPARATOR);
         }
         writer.println();
     }
+
+
 }

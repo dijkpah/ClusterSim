@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public class Server extends Node {
     private final static Logger logger = Logger.getLogger(Server.class.getName());
+    private boolean overloaded;
 
     public Set<Integer> groupIds(){
         Set<Integer> result = new TreeSet<>();
@@ -122,10 +123,22 @@ public class Server extends Node {
     }
 
     /**
+     * Get the amount of reserved CPU
+     * @return
+     */
+    public int getReservedCPU() {
+        int total = 0;
+        for (VM vm : reservedVMs) {
+            total += vm.MAX_CPU();
+        }
+        return total;
+    }
+
+    /**
      * Get the cpu usage caused by vms which are not migrating or reserved VMs
      * @return
      */
-    public int getRunningCPU() {
+    public int getNonMigratingCPU() {
         int total = 0;
         for (VM vm : getNonMigratingVMs()) {
             total += vm.getCPU();
@@ -135,16 +148,26 @@ public class Server extends Node {
 
     @Override
     public String toString() {
-        return "Server(id=" + id + ", cpu=" + getCPU() + ", state=" + getState() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ", #runningVMs=" + getVms().size() + ", #reservedVMs=" + getReservedVMs().size() + ")";
+        return "Server(id=" + id + ", overloaded=" + isOverloaded() + ", cpu=" + getCPU() + ", state=" + getState() + ", assigned=" + getAssignedCPU() + ", max_cpu=" + MAX_CPU + ", #runningVMs=" + getVms().size() + ", #reservedVMs=" + getReservedVMs().size() + ")";
     }
 
     @Override
     public void tick() {
         //TODO: finish previously started migrations
+        this.setOverloaded(false);
 
         //First fluctuate load of VMs
         for (VM vm : vms) {
             vm.tick();
+        }
+
+        // Cap the VM load if it exceeds the Server load
+        if(this.getCPU() > this.MAX_CPU){
+            this.setOverloaded(true);
+            double ratio = this.MAX_CPU / (double)this.getCPU();
+            for(VM vm : vms){
+                vm.setCPULoad(vm.getCPULoad() * ratio);
+            }
         }
 
         logger.finest("Tick " + this.toString());

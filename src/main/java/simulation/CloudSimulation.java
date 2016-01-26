@@ -13,6 +13,7 @@ import vm.M4XLargeVM;
 import vm.VM;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -21,6 +22,7 @@ import java.util.stream.IntStream;
  */
 @Data
 public class CloudSimulation extends ClusterSimulation{
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     private static final int nthServerSleeps = 5;//every nth server is put to sleep
     private static final int amountOfRacks = 4;

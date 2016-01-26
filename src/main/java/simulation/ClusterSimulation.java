@@ -33,7 +33,7 @@ public class ClusterSimulation {
     @NonNull
     private MigrationPolicy migrationPolicy;
 
-    private final static Logger logger = Logger.getLogger(ClusterSimulation.class.getName());
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public long clock;
     private List<Migration> currentMigrations = new ArrayList<>();
