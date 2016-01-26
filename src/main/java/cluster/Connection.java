@@ -50,6 +50,8 @@ public class Connection extends Path implements SimulationEntity{
     public void applyNetworkTraffic() {
         int toApply = networkTraffic - applied;
 
+        if(toApply == 0) return;
+
         switch(type){
             case MIGRATION:
                 for(Edge edge : getEdges()){
@@ -57,7 +59,7 @@ public class Connection extends Path implements SimulationEntity{
                     if(toApply > cable.getCapacity()-cable.getBandwidth()){
                         logger.severe("Cable capacity is not sufficient (migration): toApply=" + toApply + ", cable=" + cable);
                     }
-                    cable.setMigrationBandwidth(cable.getMigrationBandwidth() + networkTraffic - applied);
+                    cable.setMigrationBandwidth(cable.getMigrationBandwidth() + toApply);
                 }
                 break;
             case INTERNAL:
@@ -66,7 +68,7 @@ public class Connection extends Path implements SimulationEntity{
                     if(toApply > cable.getCapacity()-cable.getBandwidth()){
                         logger.severe("Cable capacity is not sufficient (internal): toApply=" + toApply + ", cable=" + cable);
                     }
-                    cable.setInternalCommunicationBandwidth(cable.getInternalCommunicationBandwidth() + networkTraffic - applied);
+                    cable.setInternalCommunicationBandwidth(cable.getInternalCommunicationBandwidth() + toApply);
                 }
                 break;
             case EXTERNAL:
@@ -75,7 +77,7 @@ public class Connection extends Path implements SimulationEntity{
                     if(toApply > cable.getCapacity()-cable.getBandwidth()){
                         logger.severe("Cable capacity is not sufficient (external): toApply=" + toApply + ", cable=" + cable);
                     }
-                    cable.setExternalCommunicationBandwidth(cable.getExternalCommunicationBandwidth() + networkTraffic - applied);
+                    cable.setExternalCommunicationBandwidth(cable.getExternalCommunicationBandwidth() + toApply);
                 }
                 break;
         }
@@ -83,11 +85,11 @@ public class Connection extends Path implements SimulationEntity{
     }
 
     /**
-     * Get the total (all types) used bandwidth on this connection, which is the maximum of the bandwidths of the cables.
-     * @return The total used bandwidth
+     * Get the remaining (all types) possible bandwidth on this connection, which is the minimum of the possible bandwidths of the cables.
+     * @return The remaining possible bandwidth
      */
-    public int getBandwidth(){
-        return this.getEdges().stream().mapToInt((Edge edge) -> (edge instanceof Cable) ? ((Cable) edge).getBandwidth() : Integer.MAX_VALUE).max().getAsInt();
+    public int getRemainingBandwidth(){
+        return this.getEdges().stream().mapToInt((Edge edge) -> (edge instanceof Cable) ? ((Cable) edge).getCapacity() - ((Cable) edge).getBandwidth() : Integer.MAX_VALUE).min().getAsInt();
     }
 
     /**
