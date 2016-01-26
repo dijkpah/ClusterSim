@@ -40,11 +40,19 @@ public abstract class VM implements SimulationEntity {
     private int networkTrafficToWorld;
     private Server server;
 
+
     public int MAX_CPU() {
         return this.vCPUs * 100;
     }
 
+    /**
+     * The current CPU load of this VM. Can be lower than the required CPU load as a result of an overloaded server
+     */
     public double CPULoad;
+    /**
+     * The required CPU load.
+     */
+    private double requiredCPULoad;
 
     /**
      * The amount of RAM, in GiB.
@@ -100,7 +108,8 @@ public abstract class VM implements SimulationEntity {
      * Fluctuate the load on this VM.
      */
     private void fluctuateLoad() {
-        this.CPULoad = loadGenerator.generate(this.CPULoad, 0, Params.CPU_LOAD_POSSIBLE_MAX);
+        this.requiredCPULoad = loadGenerator.generate(this.requiredCPULoad, 0, Params.CPU_LOAD_POSSIBLE_MAX);
+        this.CPULoad = this.requiredCPULoad;
     }
 
     /**
