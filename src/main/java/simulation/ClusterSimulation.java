@@ -213,11 +213,11 @@ public class ClusterSimulation {
     }
 
     protected String getOutputFileName() {
-        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + "." + Params.OUTPUT_FILE_EXTENTION;
+        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + "-" + this.getMigrationPolicy().toString() + "." + Params.OUTPUT_FILE_EXTENTION;
     }
 
     protected String getLogFileName() {
-        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + ".log";
+        return Params.OUTPUT_FILE_PREFIX + this.getCluster().getName() + "-" + this.getMigrationPolicy().toString() + ".log";
     }
 
     public void setupLogging() {
