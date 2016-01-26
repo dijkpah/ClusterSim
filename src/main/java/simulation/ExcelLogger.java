@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @Data
 public class ExcelLogger {
 
+    /** The simulation this logger logs for */
+    private ClusterSimulation simulation;
 
     /** Consumption in Watt for the servers */
     private List<Integer> serverConsumption = new ArrayList<>(Params.TICK_COUNT);
@@ -44,8 +46,21 @@ public class ExcelLogger {
     /** The list of counts of servers which are in a specific state */
     private List<Map<Server.State, Integer>> serverStates = new ArrayList<>(Params.TICK_COUNT);
 
+    /**
+     * List containing per server (id) the number of running VMs (including migrating ones)
+     */
+    private List<Map<Integer, Integer>> runningVMs = new ArrayList<>(Params.TICK_COUNT);
+    /**
+     * List containing per server (id) the number of reserved VMs (currently migrating to the server)
+     */
+    private List<Map<Integer, Integer>> reservedVMs = new ArrayList<>(Params.TICK_COUNT);
 
-    public void tick(ClusterSimulation simulation) {
+    public ExcelLogger(ClusterSimulation simulation){
+        this.simulation = simulation;
+    }
+
+
+    public void tick() {
         int tickServerConsumption = 0;
         int tickBaseSwitchConsumption = 0;
         int tickExternalNetworkConsumption = 0;
@@ -55,17 +70,27 @@ public class ExcelLogger {
         int tickInternalNetworkUsage = 0;
         int tickMigrationNetworkUsage = 0;
         Map<Server.State, Integer> tickServerStates = new HashMap<>();
+        Map<Integer, Integer> tickRunningVMs = new HashMap<>();
+        Map<Integer, Integer> tickReservedVMs = new HashMap<>();
 
 
         for (Node node : simulation.getCluster().getNodes()) {
             if (node instanceof Server) {
                 Server server = (Server) node;
+
+                // Power usage
                 tickServerConsumption += server.getPowerUsage();
+
+                // Server state
                 if(!tickServerStates.containsKey(server.getState())){
                     tickServerStates.put(server.getState(), 1);
                 }else{
                     tickServerStates.put(server.getState(), tickServerStates.get(server.getState()) + 1);
                 }
+
+                // Number of VMs
+                tickRunningVMs.put(server.getId(), server.getVms().size());
+                tickReservedVMs.put(server.getId(), server.getReservedVMs().size());
             } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
                 tickBaseSwitchConsumption += aSwitch.getBaseConsumption();
@@ -94,6 +119,8 @@ public class ExcelLogger {
         this.internalNetworkUsage.add(tickInternalNetworkUsage);
         this.migrationNetworkUsage.add(tickMigrationNetworkUsage);
         this.serverStates.add(tickServerStates);
+        this.runningVMs.add(tickRunningVMs);
+        this.reservedVMs.add(tickReservedVMs);
     }
 
     public void makeGraph(String outputFileName, Map<String, String> params) {
@@ -123,6 +150,15 @@ public class ExcelLogger {
         for(Server.State state : Server.State.values()){
             this.printStats(writer, String.format("%1$-44s", "Server state - " + state), serverStates.stream().map(
                 item -> item.containsKey(state) ? item.get(state) : 0
+            ).collect(Collectors.toList()));
+        }
+
+        for(Server server : simulation.getCluster().getServers()){
+            this.printStats(writer, String.format("%1$-44s", "Server " + server.getId() + " - running VMs"), runningVMs.stream().map(
+                    item -> item.get(server.getId())
+            ).collect(Collectors.toList()));
+            this.printStats(writer, String.format("%1$-44s", "Server " + server.getId() + " - reserved VMs"), reservedVMs.stream().map(
+                    item -> item.get(server.getId())
             ).collect(Collectors.toList()));
         }
 

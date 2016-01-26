@@ -36,7 +36,7 @@ public class ClusterSimulation {
 
     public long clock;
     private List<Migration> currentMigrations = new ArrayList<>();
-    private ExcelLogger excelLogger = new ExcelLogger();
+    private ExcelLogger excelLogger = new ExcelLogger(this);
 
     /**
      * The total number of migrations in the last tick
@@ -189,7 +189,7 @@ public class ClusterSimulation {
      * Enters power consumption summations for servers and connections
      */
     private void updateLog() {
-        excelLogger.tick(this);
+        excelLogger.tick();
     }
 
 
@@ -228,9 +228,9 @@ public class ClusterSimulation {
             handler = new ConsoleHandler();
         }
         globalLogger.setLevel(Params.LOG_LEVEL);
-        for (Handler defaultHandler : globalLogger.getHandlers()) {
+        /*for (Handler defaultHandler : globalLogger.getHandlers()) {
             globalLogger.removeHandler(defaultHandler);
-        }
+        }*/
         handler.setLevel(Params.LOG_LEVEL);
         handler.setFormatter(new ClusterSimLogFormatter());
         globalLogger.addHandler(handler);
