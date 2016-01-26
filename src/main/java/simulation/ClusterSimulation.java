@@ -11,7 +11,9 @@ import migration.Migration;
 import migration.MigrationPolicy;
 import vm.VM;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.util.*;
 import java.util.logging.*;
 
@@ -219,20 +221,32 @@ public class ClusterSimulation {
     }
 
     public void setupLogging() {
+        // Make directories
+        if(this.getLogFileName().contains("/")){
+            File file = new File(this.getLogFileName());
+            File parent = new File(file.getParent());
+            parent.mkdirs();
+        }
+
+        // Setup logger
         Logger globalLogger = LogManager.getLogManager().getLogger("");
-        Handler handler = null;
+        globalLogger.setLevel(Params.LOG_LEVEL);
+
+        // By default, there is a console handler
+        for (Handler defaultHandler : globalLogger.getHandlers()) {
+            defaultHandler.setLevel(Params.LOG_LEVEL_CONSOLE);
+            defaultHandler.setFormatter(new ClusterSimLogFormatter());
+        }
+
         try {
-            handler = new FileHandler(this.getLogFileName());
+            Handler handler = new FileHandler(this.getLogFileName());
+            handler.setLevel(Params.LOG_LEVEL);
+            handler.setFormatter(new ClusterSimLogFormatter());
+            globalLogger.addHandler(handler);
         } catch (IOException e) {
             e.printStackTrace();
-            handler = new ConsoleHandler();
         }
-        globalLogger.setLevel(Params.LOG_LEVEL);
-        /*for (Handler defaultHandler : globalLogger.getHandlers()) {
-            globalLogger.removeHandler(defaultHandler);
-        }*/
-        handler.setLevel(Params.LOG_LEVEL);
-        handler.setFormatter(new ClusterSimLogFormatter());
-        globalLogger.addHandler(handler);
+
+
     }
 }
