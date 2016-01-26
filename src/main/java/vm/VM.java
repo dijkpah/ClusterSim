@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 @EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
 public abstract class VM implements SimulationEntity {
     private final static Logger logger = Logger.getLogger(VM.class.getName());
-    private int groupId;
+    private Integer groupId;
 
     @NonNull
     public final int id;
