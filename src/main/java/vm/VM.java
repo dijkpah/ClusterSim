@@ -115,7 +115,7 @@ public abstract class VM implements SimulationEntity {
     /**
      * Fluctuate the network traffic on this VM, both to the world and to connected VMs.
      */
-    private void fluctuateNetworkTraffic() {
+    public void fluctuateNetworkTraffic() {
         this.networkTrafficToWorld = this.networkTrafficGenerator.generateToWorld(this);
         for(Map.Entry<VM, Integer> entry : connectedVMs.entrySet()){
             entry.setValue(this.networkTrafficGenerator.generateBetweenVM(entry.getValue(), this.getMaxBandwidth() - this.networkTrafficToWorld));

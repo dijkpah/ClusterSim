@@ -167,6 +167,8 @@ public class Server extends Node {
             double ratio = this.MAX_CPU / (double)this.getCPU();
             for(VM vm : vms){
                 vm.setCPULoad(vm.getCPULoad() * ratio);
+                // Recalculate network traffic based on new load
+                vm.fluctuateNetworkTraffic();
             }
         }
 
