@@ -13,6 +13,9 @@ import java.util.logging.Logger;
  * Migration policy which does random migrations
  */
 public class RandomMigrationPolicy extends MigrationPolicy {
+
+    private Random random = new Random(2L);
+
     private final static Logger logger = Logger.getLogger(RandomMigrationPolicy.class.getName());
 
     private double upperThreshold;
@@ -24,7 +27,6 @@ public class RandomMigrationPolicy extends MigrationPolicy {
     @Override
     Server determineMigrationTarget(VM vm, Cluster<Node, Cable> cluster) {
         logger.fine("Allocating VM " + vm);
-        Random random = new Random(2L);
 
         // Get all possible targets
         List<Server> possibleServers = cluster.getServers();
