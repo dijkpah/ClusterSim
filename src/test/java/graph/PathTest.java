@@ -1,26 +1,44 @@
 package graph;
 
-import cluster.*;
+import cluster.Cable;
+import cluster.Cluster;
+import cluster.ClusterFactory;
+import cluster.World;
 import org.junit.Before;
 import org.junit.Test;
 import switches.HubSwitch;
-import switches.Switch;
 
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class PathTest {
 
+
+    List<Node> nodes;
+    List<Edge> edges;
+
+    @Before
+    public void init(){
+        nodes = new ArrayList<>();
+        edges = new ArrayList<>();
+    }
+
     @Test
     public void testFindShortestPathSimple() {
+
         Node firstNode = new HubSwitch(0);
         Node lastNode = new HubSwitch(1);
+        nodes.add(firstNode);
+        nodes.add(lastNode);
 
         Cable cable1 = ClusterFactory.createCable(firstNode, lastNode);
+        edges.add(cable1);
 
-        Path path = new Path(firstNode, lastNode);
+        Cluster graph = new Cluster("Cluster", new World(-1), nodes, edges);
+
+        Path path = new Path(graph, firstNode, lastNode);
 
         assertEquals(1, path.getEdges().size());
         assertEquals(cable1, path.getEdges().get(0));
@@ -35,17 +53,25 @@ public class PathTest {
         Node node11 = new HubSwitch(11);
         Node node12 = new HubSwitch(12);
 
+        nodes.add(firstNode);
+        nodes.add(lastNode);
+        nodes.add(node10);
+        nodes.add(node11);
+        nodes.add(node12);
+
         // shortest path
-        ClusterFactory.createCable(firstNode, node10);
-        ClusterFactory.createCable(lastNode, node10);
+        edges.add(ClusterFactory.createCable(firstNode, node10));
+        edges.add(ClusterFactory.createCable(lastNode, node10));
 
         // Additional path
-        ClusterFactory.createCable(node10, node11);
-        ClusterFactory.createCable(node11, lastNode);
+        edges.add(ClusterFactory.createCable(node10, node11));
+        edges.add(ClusterFactory.createCable(node11, lastNode));
 
-        ClusterFactory.createCable(firstNode, node12);
+        edges.add(ClusterFactory.createCable(firstNode, node12));
 
-        Path path = new Path(firstNode, lastNode);
+        Cluster graph = new Cluster("Cluster", new World(-1), nodes, edges);
+
+        Path path = new Path(graph, firstNode, lastNode);
 
         assertTrue(path.getFirstEndPoint().equals(firstNode) ^ path.getSecondEndPoint().equals(firstNode));
         assertTrue(path.getFirstEndPoint().equals(lastNode) ^ path.getSecondEndPoint().equals(lastNode));

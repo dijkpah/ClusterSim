@@ -40,7 +40,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
             }
         }
         if (result == null) {
-            result = new Connection(type, node1, node2);
+            result = new Connection(type, this, node1, node2);
             connections.add(result);
         }
         return result;
