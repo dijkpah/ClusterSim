@@ -51,10 +51,10 @@ public class CloudSimulation extends ClusterSimulation{
         nodes.add(prim2);
 
         // Create Hub switches
-        HubSwitch hub1 = new HubSwitch(1);
-        HubSwitch hub2 = new HubSwitch(2);
-        HubSwitch hub3 = new HubSwitch(3);
-        HubSwitch hub4 = new HubSwitch(4);
+        HubSwitch hub1 = new HubSwitch(11);
+        HubSwitch hub2 = new HubSwitch(12);
+        HubSwitch hub3 = new HubSwitch(13);
+        HubSwitch hub4 = new HubSwitch(14);
         nodes.add(hub1);
         nodes.add(hub2);
         nodes.add(hub3);
@@ -62,10 +62,10 @@ public class CloudSimulation extends ClusterSimulation{
 
         // Create TOR switches
         TORSwitch[] tors = new TORSwitch[amountOfRacks];
-        TORSwitch tor1 = new TORSwitch(1);
-        TORSwitch tor2 = new TORSwitch(2);
-        TORSwitch tor3 = new TORSwitch(3);
-        TORSwitch tor4 = new TORSwitch(4);
+        TORSwitch tor1 = new TORSwitch(21);
+        TORSwitch tor2 = new TORSwitch(22);
+        TORSwitch tor3 = new TORSwitch(23);
+        TORSwitch tor4 = new TORSwitch(24);
         tors[0] = tor1;
         tors[1] = tor2;
         tors[2] = tor3;
@@ -167,6 +167,7 @@ public class CloudSimulation extends ClusterSimulation{
         Random rng = new Random(0L);
 
         // Vms are linked
+        int amountOfGroups = 0;
         for(int i=0;i<createdVMs*fractionInGroup;i+=groupSize){
             //create new group
             List<VM> group = new ArrayList<>();
@@ -181,9 +182,10 @@ public class CloudSimulation extends ClusterSimulation{
 
                 //connect vms in group to each other
                 for(VM vm : group){
-                    selectedVM.connectToVM(vm);
+                    selectedVM.connectToVM(vm, amountOfGroups);
                 }
             }
+            amountOfGroups++;
         }
 
         // Return the cluster

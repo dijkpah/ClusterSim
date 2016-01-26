@@ -7,6 +7,8 @@ import vm.VM;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,14 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = true)
 public class Server extends Node {
     private final static Logger logger = Logger.getLogger(Server.class.getName());
+
+    public Set<Integer> groupIds(){
+        Set<Integer> result = new TreeSet<>();
+        for(VM vm: vms){
+            result.add(vm.getGroupId());
+        }
+        return result;
+    }
 
     /**
      * Based on:
