@@ -9,9 +9,12 @@ import lombok.ToString;
 import simulation.Params;
 import simulation.SimulationEntity;
 
+import java.util.logging.Logger;
+
 @Data
 @ToString(callSuper = true)
 public class Connection extends Path implements SimulationEntity{
+    private final static Logger logger = Logger.getLogger(Connection.class.getName());
 
     @NonNull private Type type;
     private int networkTraffic;
@@ -42,30 +45,56 @@ public class Connection extends Path implements SimulationEntity{
     }
 
     /**
-     * Apply any non applied network traffic to the underlying cables.
+     * Apply any non-applied network traffic to the underlying cables.
      */
     public void applyNetworkTraffic() {
+        int toApply = networkTraffic - applied;
+
         switch(type){
             case MIGRATION:
-                for(Edge cable : getEdges()){
-                    ((Cable)cable).setMigrationBandwidth(((Cable)cable).getMigrationBandwidth() + networkTraffic - applied);
+                for(Edge edge : getEdges()){
+                    Cable cable = (Cable) edge;
+                    if(toApply > cable.getCapacity()-cable.getBandwidth()){
+                        logger.severe("Cable capacity is not sufficient (migration): toApply=" + toApply + ", cable=" + cable);
+                    }
+                    cable.setMigrationBandwidth(cable.getMigrationBandwidth() + networkTraffic - applied);
                 }
                 break;
             case INTERNAL:
-                for(Edge cable : getEdges()){
-                    ((Cable)cable).setInternalCommunicationBandwidth(((Cable)cable).getInternalCommunicationBandwidth() + networkTraffic - applied);
+                for(Edge edge : getEdges()){
+                    Cable cable = (Cable) edge;
+                    if(toApply > cable.getCapacity()-cable.getBandwidth()){
+                        logger.severe("Cable capacity is not sufficient (internal): toApply=" + toApply + ", cable=" + cable);
+                    }
+                    cable.setInternalCommunicationBandwidth(cable.getInternalCommunicationBandwidth() + networkTraffic - applied);
                 }
                 break;
             case EXTERNAL:
-                for(Edge cable : getEdges()){
-                    ((Cable)cable).setExternalCommunicationBandwidth(((Cable)cable).getExternalCommunicationBandwidth() + networkTraffic - applied);
+                for(Edge edge : getEdges()){
+                    Cable cable = (Cable) edge;
+                    if(toApply > cable.getCapacity()-cable.getBandwidth()){
+                        logger.severe("Cable capacity is not sufficient (external): toApply=" + toApply + ", cable=" + cable);
+                    }
+                    cable.setExternalCommunicationBandwidth(cable.getExternalCommunicationBandwidth() + networkTraffic - applied);
                 }
                 break;
         }
         applied = networkTraffic;
     }
 
-    public int getBandwidth() {
+    /**
+     * Get the total (all types) used bandwidth on this connection, which is the maximum of the bandwidths of the cables.
+     * @return The total used bandwidth
+     */
+    public int getBandwidth(){
+        return this.getEdges().stream().mapToInt((Edge edge) -> (edge instanceof Cable) ? ((Cable) edge).getBandwidth() : Integer.MAX_VALUE).max().getAsInt();
+    }
+
+    /**
+     * Get the capacity of this connection, which is the minimum capacity of the cables.
+     * @return The capacity of this connection.
+     */
+    public int getCapacity() {
         // For now this is simple, but if there are different speeds possible this should be changed.
         return this.getEdges().stream().mapToInt((Edge edge) -> (edge instanceof Cable) ? ((Cable)edge).getCapacity() : Integer.MAX_VALUE).min().getAsInt();
     }

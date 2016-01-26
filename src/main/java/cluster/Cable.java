@@ -44,4 +44,8 @@ public class Cable extends Edge {
         this.internalCommunicationBandwidth = 0;
         this.migrationBandwidth = 0;
     }
+
+    public int getBandwidth() {
+        return this.externalCommunicationBandwidth + this.internalCommunicationBandwidth + this.migrationBandwidth;
+    }
 }
