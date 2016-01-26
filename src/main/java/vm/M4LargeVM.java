@@ -1,5 +1,8 @@
 package vm;
 
+import lombok.ToString;
+
+@ToString(callSuper = true)
 public class M4LargeVM extends VM {
 
     public static final int vCPUs = 2;
