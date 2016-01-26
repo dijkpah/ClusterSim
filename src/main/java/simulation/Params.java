@@ -25,7 +25,10 @@ public class Params {
     /**
      * The capacity of a cable, in Mb/s.
      */
-    public static final int CABLE_CAPACITY = 1000;
+    public static final int CABLE_CAPACITY_SERVER_TO_TOR = 10000;
+    public static final int CABLE_CAPACITY_TOR_TO_HUB = 40000;
+    public static final int CABLE_CAPACITY_HUB_TO_MAIN = 40000;
+    public static final int CABLE_CAPACITY_MAIN_TO_WORLD = 100000;
     /**
      * The duration of a tick in seconds.
      */

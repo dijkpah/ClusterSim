@@ -67,7 +67,7 @@ public class Connection extends Path implements SimulationEntity{
 
     public int getBandwidth() {
         // For now this is simple, but if there are different speeds possible this should be changed.
-        return Params.CABLE_CAPACITY;
+        return this.getEdges().stream().mapToInt((Edge edge) -> (edge instanceof Cable) ? ((Cable)edge).getCapacity() : Integer.MAX_VALUE).min().getAsInt();
     }
 
     public enum Type{

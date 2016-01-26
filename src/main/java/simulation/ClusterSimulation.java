@@ -120,7 +120,10 @@ public class ClusterSimulation {
         Map<String, String> params = new TreeMap<>();
         params.put("Initial VM CPU Usage", ""+Params.INITIAL_VM_CPU_USAGE);
         params.put("CPU load fluctuation deviation", ""+Params.CPU_LOAD_FLUCTUATION_DEVIATION);
-        params.put("Cable Capacity (Mbps)", ""+Params.CABLE_CAPACITY);
+        params.put("Cable Capacity Server <> TOR (Mbps)", ""+Params.CABLE_CAPACITY_SERVER_TO_TOR);
+        params.put("Cable Capacity TOR <> Hub (Mbps)", ""+Params.CABLE_CAPACITY_TOR_TO_HUB);
+        params.put("Cable Capacity Hub <> Main (Mbps)", ""+Params.CABLE_CAPACITY_HUB_TO_MAIN);
+        params.put("Cable Capacity Main <> World (Mbps)", ""+Params.CABLE_CAPACITY_MAIN_TO_WORLD);
         params.put("Tick duration (s)", ""+Params.TICK_DURATION);
         params.put("Tick Count", ""+Params.TICK_COUNT);
         params.put("Percentage network traffic between a VM and the world of bandwidth when 100% CPU", ""+Params.NETWORK_USAGE_VM_TO_WORLD_PERCENTAGE);

@@ -30,13 +30,13 @@ public class ClusterFactory {
 
         // connect to world
         nodes.add(switch1);
-        edges.add(createCable(world, switch1));
+        edges.add(createCable(world, switch1, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
 
         // Create servers
         for(int j=0; j<servers; j++){
             Server server = new Server(j+2);
             nodes.add(server);
-            edges.add(createCable(server, switch1));
+            edges.add(createCable(server, switch1, Params.CABLE_CAPACITY_SERVER_TO_TOR));
         }
 
         // Return the cluster
@@ -80,13 +80,15 @@ public class ClusterFactory {
         nodes.add(server2);
 
         // Create edges
-        edges.add(createCable(server1, switch1));
-        edges.add(createCable(server2, switch1));
-        edges.add(createCable(switch1, world));
+        edges.add(createCable(server1, switch1, Params.CABLE_CAPACITY_SERVER_TO_TOR));
+        edges.add(createCable(server2, switch1, Params.CABLE_CAPACITY_SERVER_TO_TOR));
+        edges.add(createCable(switch1, world, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
 
         // Vms are linked
         vm1.connectToVM(vm2);
         vm2.connectToVM(vm1);
+        vm3.connectToVM(vm4);
+        vm4.connectToVM(vm3);
 
         // Return the cluster
         return new Cluster<Node, Cable>("Simple cluster", world, nodes, edges);
@@ -97,10 +99,11 @@ public class ClusterFactory {
      *
      * @param node1 The first node.
      * @param node2 The second node.
+     * @param capacity The capacity of the cable
      * @return A Cable between the nodes.
      */
-    public static Cable createCable(Node node1, Node node2) {
-        Cable cable = new Cable(node1, node2, Params.CABLE_CAPACITY);
+    public static Cable createCable(Node node1, Node node2, int capacity) {
+        Cable cable = new Cable(node1, node2, capacity);
         node1.addEdge(cable);
         node2.addEdge(cable);
         return cable;

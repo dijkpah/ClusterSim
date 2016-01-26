@@ -33,7 +33,7 @@ public class PathTest {
         nodes.add(firstNode);
         nodes.add(lastNode);
 
-        Cable cable1 = ClusterFactory.createCable(firstNode, lastNode);
+        Cable cable1 = ClusterFactory.createCable(firstNode, lastNode, 10000);
         edges.add(cable1);
 
         Cluster graph = new Cluster("Cluster", new World(-1), nodes, edges);
@@ -60,14 +60,14 @@ public class PathTest {
         nodes.add(node12);
 
         // shortest path
-        edges.add(ClusterFactory.createCable(firstNode, node10));
-        edges.add(ClusterFactory.createCable(lastNode, node10));
+        edges.add(ClusterFactory.createCable(firstNode, node10, 10000));
+        edges.add(ClusterFactory.createCable(lastNode, node10, 10000));
 
         // Additional path
-        edges.add(ClusterFactory.createCable(node10, node11));
-        edges.add(ClusterFactory.createCable(node11, lastNode));
+        edges.add(ClusterFactory.createCable(node10, node11, 10000));
+        edges.add(ClusterFactory.createCable(node11, lastNode, 10000));
 
-        edges.add(ClusterFactory.createCable(firstNode, node12));
+        edges.add(ClusterFactory.createCable(firstNode, node12, 10000));
 
         Cluster graph = new Cluster("Cluster", new World(-1), nodes, edges);
 

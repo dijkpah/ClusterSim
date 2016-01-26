@@ -37,9 +37,6 @@ public class CloudSimulation extends ClusterSimulation{
      * Creates a simple cluster with one switch, two servers and one VM on both server.
      */
     public static Cluster<Node, Cable> simpleCloud() {
-
-
-
         List<Node> nodes = new ArrayList<Node>();
         List<Cable> edges = new ArrayList<Cable>();
 
@@ -86,32 +83,32 @@ public class CloudSimulation extends ClusterSimulation{
                 Server server = new Server(100+i*100+j);
                 racks[i].add(server);
                 nodes.add(server); //add server to graph
-                edges.add(ClusterFactory.createCable(server, tors[i])); //add edge to this rack's TOR switch
+                edges.add(ClusterFactory.createCable(server, tors[i], Params.CABLE_CAPACITY_SERVER_TO_TOR)); //add edge to this rack's TOR switch
             }
         }
 
         // Create edges
         // Link world to primary switches
-        edges.add(ClusterFactory.createCable(prim1, world));
-        edges.add(ClusterFactory.createCable(prim2, world));
+        edges.add(ClusterFactory.createCable(prim1, world, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
+        edges.add(ClusterFactory.createCable(prim2, world, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
         // Link hubs to primary switches
-        edges.add(ClusterFactory.createCable(hub1, prim1));
-        edges.add(ClusterFactory.createCable(hub2, prim1));
-        edges.add(ClusterFactory.createCable(hub3, prim1));
-        edges.add(ClusterFactory.createCable(hub4, prim1));
-        edges.add(ClusterFactory.createCable(hub1, prim2));
-        edges.add(ClusterFactory.createCable(hub2, prim2));
-        edges.add(ClusterFactory.createCable(hub3, prim2));
-        edges.add(ClusterFactory.createCable(hub4, prim2));
+        edges.add(ClusterFactory.createCable(hub1, prim1, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub2, prim1, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub3, prim1, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub4, prim1, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub1, prim2, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub2, prim2, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub3, prim2, Params.CABLE_CAPACITY_HUB_TO_MAIN));
+        edges.add(ClusterFactory.createCable(hub4, prim2, Params.CABLE_CAPACITY_HUB_TO_MAIN));
         // Link hubs to TORs
-        edges.add(ClusterFactory.createCable(hub1, tor1));
-        edges.add(ClusterFactory.createCable(hub2, tor1));
-        edges.add(ClusterFactory.createCable(hub1, tor2));
-        edges.add(ClusterFactory.createCable(hub2, tor2));
-        edges.add(ClusterFactory.createCable(hub3, tor3));
-        edges.add(ClusterFactory.createCable(hub4, tor3));
-        edges.add(ClusterFactory.createCable(hub3, tor4));
-        edges.add(ClusterFactory.createCable(hub4, tor4));
+        edges.add(ClusterFactory.createCable(hub1, tor1, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub2, tor1, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub1, tor2, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub2, tor2, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub3, tor3, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub4, tor3, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub3, tor4, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(ClusterFactory.createCable(hub4, tor4, Params.CABLE_CAPACITY_TOR_TO_HUB));
 
 
 
@@ -183,7 +180,7 @@ public class CloudSimulation extends ClusterSimulation{
                 vms.remove(index);
 
                 //connect vms in group to each other
-                for(VM vm : vms){
+                for(VM vm : group){
                     selectedVM.connectToVM(vm);
                 }
             }
