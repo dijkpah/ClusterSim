@@ -7,10 +7,7 @@ import migration.MigrationPolicy;
 import switches.HubSwitch;
 import switches.MainSwitch;
 import switches.TORSwitch;
-import vm.M42XLargeVM;
-import vm.M4LargeVM;
-import vm.M4XLargeVM;
-import vm.VM;
+import vm.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -170,19 +167,19 @@ public class CloudSimulation extends ClusterSimulation{
         int amountOfGroups = 0;
         for(int i=0;i<createdVMs*fractionInGroup;i+=groupSize){
             //create new group
-            List<VM> group = new ArrayList<>();
+            VMGroup group = new VMGroup(amountOfGroups, new TreeSet<>());
             for(int j=0;j<groupSize;j++){
                 //add a VM to group
                 int index = rng.nextInt(vms.size());
                 VM selectedVM = vms.get(index);
-                group.add(selectedVM);
+                group.getVms().add(selectedVM);
 
                 //remove VM from vms
                 vms.remove(index);
 
                 //connect vms in group to each other
-                for(VM vm : group){
-                    selectedVM.connectToVM(vm, amountOfGroups);
+                for(VM vm : group.getVms()){
+                    selectedVM.connectToVM(vm, group);
                 }
             }
             amountOfGroups++;

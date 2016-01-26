@@ -7,11 +7,12 @@ import org.junit.Test;
 import switches.Switch;
 import vm.M4XLargeVM;
 import vm.VM;
+import vm.VMGroup;
+
+import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ClusterTest {
 
@@ -76,8 +77,9 @@ public class ClusterTest {
         VM vm1 = new M4XLargeVM(1);
         VM vm2 = new M4XLargeVM(2);
 
-        vm1.connectToVM(vm2,0);
-        vm2.connectToVM(vm1,0);
+        VMGroup group0 = new VMGroup(0, new TreeSet<>());
+        vm1.connectToVM(vm2,group0);
+        vm2.connectToVM(vm1,group0);
 
         server1.addVM(vm1);
         server2.addVM(vm2);

@@ -20,7 +20,7 @@ public class Server extends Node {
     public Set<Integer> groupIds(){
         Set<Integer> result = new TreeSet<>();
         for(VM vm: vms){
-            result.add(vm.getGroupId());
+            result.add(vm.getGroup().getId());
         }
         return result;
     }

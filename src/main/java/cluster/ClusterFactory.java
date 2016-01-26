@@ -7,9 +7,11 @@ import switches.Switch;
 import vm.M4LargeVM;
 import vm.M4XLargeVM;
 import vm.VM;
+import vm.VMGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 public class ClusterFactory {
 
@@ -85,10 +87,17 @@ public class ClusterFactory {
         edges.add(createCable(switch1, world, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
 
         // Vms are linked
-        vm1.connectToVM(vm2,0);
-        vm2.connectToVM(vm1,0);
-        vm3.connectToVM(vm4,1);
-        vm4.connectToVM(vm3,1);
+        VMGroup group0 = new VMGroup(0, new TreeSet<>());
+        vm1.connectToVM(vm2,group0);
+        group0.getVms().add(vm1);
+        group0.getVms().add(vm2);
+
+        VMGroup group1 = new VMGroup(0, new TreeSet<>());
+        vm3.connectToVM(vm4,group1);
+        group1.getVms().add(vm3);
+        group1.getVms().add(vm4);
+
+
 
         // Return the cluster
         return new Cluster<Node, Cable>("Simple cluster", world, nodes, edges);

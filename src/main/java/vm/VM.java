@@ -9,7 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
-import simulation.*;
+import simulation.Params;
+import simulation.SimulationEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +20,10 @@ import java.util.logging.Logger;
 // capacity, storage capacity and network bandwidth
 @Data
 @ToString(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
-@EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
-public abstract class VM implements SimulationEntity {
+@EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server", "group"})
+public abstract class VM implements SimulationEntity, Comparable{
     private final static Logger logger = Logger.getLogger(VM.class.getName());
-    private Integer groupId;
+    private VMGroup group;
 
     @NonNull
     public final int id;
@@ -118,9 +119,9 @@ public abstract class VM implements SimulationEntity {
      * Connect this VM to another VM.
      * @param other The VM to connect to.
      */
-    public void connectToVM(VM other, int groupId) {
+    public void connectToVM(VM other, VMGroup group) {
         this.connectedVMs.put(other, 0);
-        this.groupId = groupId;
+        this.group = group;
     }
 
     public void tick() {
@@ -141,5 +142,10 @@ public abstract class VM implements SimulationEntity {
     public enum State {
         RUNNING,
         MIGRATING
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getId()-((VM)o).getId();
     }
 }

@@ -3,8 +3,6 @@ package migration;
 import cluster.Cable;
 import cluster.Cluster;
 import cluster.Server;
-import graph.Edge;
-import graph.Graph;
 import graph.Node;
 import vm.VM;
 
@@ -62,5 +60,16 @@ public abstract class MigrationPolicy {
      * @return null or a set of VMs
      */
     abstract Set<VM> determineVMsToMigrate(Server server);
+
+
+    public VM selectLargest(Server server) {
+        VM bestVM = null;
+        for(VM vm : server.getVms()){
+            if(vm.getState().equals(VM.State.RUNNING) && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
+                bestVM = vm;
+            }
+        }
+        return bestVM;
+    }
 
 }

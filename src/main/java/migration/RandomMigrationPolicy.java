@@ -45,20 +45,13 @@ public class RandomMigrationPolicy extends MigrationPolicy {
 
     @Override
     public Set<VM> determineVMsToMigrate(Server server) {
-        Set<VM> result = null;
+        Set<VM> result = new HashSet<>();
         if(server.getRunningCPU() > server.MAX_CPU*upperThreshold) {
             logger.fine("Server has exceeded upper threshold: " + server);
 
-            result = new HashSet<>();
-
             while(server.getNonMigratingVMs().size() > 1 && server.getRunningCPU() > server.MAX_CPU*upperThreshold){
                 // Pick one with largest CPU
-                VM bestVM = null;
-                for(VM vm : server.getVms()){
-                    if(vm.getState().equals(VM.State.RUNNING) && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
-                        bestVM = vm;
-                    }
-                }
+                VM bestVM = super.selectLargest(server);
                 if(bestVM != null){
                     bestVM.setState(VM.State.MIGRATING);
                     result.add(bestVM);
