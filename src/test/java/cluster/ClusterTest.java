@@ -76,8 +76,8 @@ public class ClusterTest {
         VM vm1 = new M4XLargeVM(1);
         VM vm2 = new M4XLargeVM(2);
 
-        vm1.connectToVM(vm2);
-        vm2.connectToVM(vm1);
+        vm1.connectToVM(vm2,0);
+        vm2.connectToVM(vm1,0);
 
         server1.addVM(vm1);
         server2.addVM(vm2);

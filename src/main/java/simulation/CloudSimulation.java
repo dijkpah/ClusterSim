@@ -170,6 +170,7 @@ public class CloudSimulation extends ClusterSimulation{
         Random rng = new Random(0L);
 
         // Vms are linked
+        int amountOfGroups = 0;
         for(int i=0;i<createdVMs*fractionInGroup;i+=groupSize){
             //create new group
             List<VM> group = new ArrayList<>();
@@ -184,9 +185,10 @@ public class CloudSimulation extends ClusterSimulation{
 
                 //connect vms in group to each other
                 for(VM vm : vms){
-                    selectedVM.connectToVM(vm);
+                    selectedVM.connectToVM(vm, amountOfGroups);
                 }
             }
+            amountOfGroups++;
         }
 
         // Return the cluster

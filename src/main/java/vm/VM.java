@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 @EqualsAndHashCode(exclude = {"loadGenerator", "networkTrafficGenerator", "connectedVMs", "server"})
 public abstract class VM implements SimulationEntity {
     private final static Logger logger = Logger.getLogger(VM.class.getName());
-    private boolean hasGroup;
+    private int groupId;
 
     @NonNull
     public final int id;
@@ -118,9 +118,9 @@ public abstract class VM implements SimulationEntity {
      * Connect this VM to another VM.
      * @param other The VM to connect to.
      */
-    public void connectToVM(VM other) {
+    public void connectToVM(VM other, int groupId) {
         this.connectedVMs.put(other, 0);
-        this.hasGroup = true;
+        this.groupId = groupId;
     }
 
     public void tick() {

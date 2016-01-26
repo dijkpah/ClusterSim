@@ -85,8 +85,8 @@ public class ClusterFactory {
         edges.add(createCable(switch1, world));
 
         // Vms are linked
-        vm1.connectToVM(vm2);
-        vm2.connectToVM(vm1);
+        vm1.connectToVM(vm2,0);
+        vm2.connectToVM(vm1,0);
 
         // Return the cluster
         return new Cluster<Node, Cable>("Simple cluster", world, nodes, edges);
