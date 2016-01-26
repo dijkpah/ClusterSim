@@ -13,7 +13,6 @@ import vm.VM;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystem;
 import java.util.*;
 import java.util.logging.*;
 
@@ -34,7 +33,7 @@ public class ClusterSimulation {
     @NonNull
     private MigrationPolicy migrationPolicy;
 
-    private final static Logger logger = Logger.getLogger(ClusterSimulation.class.getName());
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public long clock;
     private List<Migration> currentMigrations = new ArrayList<>();
@@ -61,7 +60,7 @@ public class ClusterSimulation {
 
         clock = 0;
         while (clock < ticks) {
-            logger.info("== TICK " + clock + " ==");
+            logger.info("== TICK " + clock);
 
             // Reset the cluster for the new tick
             // This mainly resets the traffic on the cables
@@ -156,7 +155,10 @@ public class ClusterSimulation {
                 }
 
                 // Determine remaining bandwidth
-                int bandwidth = connection.getBandwidth() - connection.getNetworkTraffic();
+                int bandwidth = connection.getRemainingBandwidth();
+                if(bandwidth<0){
+                    logger.severe("Uhm: using " + (connection.getCapacity()-connection.getRemainingBandwidth()) + " of " + connection.getCapacity() + " Mbps - " + connection);
+                }
                 // Determine used bandwidth and make sure it is rounded up (otherwise there is a small remaining fraction of the VM still in need of transfer).
                 bandwidth = Math.min(bandwidth, (int)Math.ceil((migration.getVm().getSize() - migration.getTransferredData())/(double)Params.TICK_DURATION));
                 // Use this bandwidth

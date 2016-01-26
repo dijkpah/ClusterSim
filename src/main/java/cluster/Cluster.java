@@ -11,12 +11,15 @@ import vm.VM;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implements SimulationEntity {
+    private final static Logger logger = Logger.getLogger(Cluster.class.getName());
+
     private String name;
     private World world;
 
@@ -88,7 +91,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                     // Connection to the world
                     connection = this.getConnection(Connection.Type.EXTERNAL, server, this.getWorld());
                     if (connection == null) {
-                        System.err.println("WHAAAAAAAAAAA");
+                        logger.severe("WHAAAAAAAAA, this VM is standalone (standalone cloud?) " + vm);
                         return;
                     }
                     connection.addNetworkTraffic(vm.getNetworkTrafficToWorld());
@@ -97,7 +100,7 @@ public class Cluster<N extends Node, E extends Cable> extends Graph<N, E> implem
                     for (Map.Entry<VM, Integer> other : vm.getConnectedVMs().entrySet()) {
                         connection = this.getConnection(Connection.Type.INTERNAL, server, other.getKey().getServer());
                         if (connection == null) {
-                            System.err.println("WHAAAAAAAAAAA");
+                            logger.severe("WHAAAAAAAAA, this VM is missing his friends" + vm);
                             return;
                         }
                         connection.addNetworkTraffic(other.getValue());

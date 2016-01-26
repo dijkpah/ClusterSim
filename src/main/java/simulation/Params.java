@@ -48,7 +48,7 @@ public class Params {
     public static final double NETWORK_USAGE_VM_TO_WORLD_PERCENTAGE = 0.5;
 
 
-    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.4);
+    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.8);
     public static final Cluster<Node,Cable> CLUSTER = ClusterFactory.simpleCluster();
     public static final int TICK_COUNT = 240;
 

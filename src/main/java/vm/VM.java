@@ -41,11 +41,19 @@ public abstract class VM implements SimulationEntity, Comparable{
     private int networkTrafficToWorld;
     private Server server;
 
+
     public int MAX_CPU() {
         return this.vCPUs * 100;
     }
 
+    /**
+     * The current CPU load of this VM. Can be lower than the required CPU load as a result of an overloaded server
+     */
     public double CPULoad;
+    /**
+     * The required CPU load.
+     */
+    private double requiredCPULoad;
 
     /**
      * The amount of RAM, in GiB.
@@ -101,13 +109,14 @@ public abstract class VM implements SimulationEntity, Comparable{
      * Fluctuate the load on this VM.
      */
     private void fluctuateLoad() {
-        this.CPULoad = loadGenerator.generate(this.CPULoad, 0, Params.CPU_LOAD_POSSIBLE_MAX);
+        this.requiredCPULoad = loadGenerator.generate(this.requiredCPULoad, 0, Params.CPU_LOAD_POSSIBLE_MAX);
+        this.CPULoad = this.requiredCPULoad;
     }
 
     /**
      * Fluctuate the network traffic on this VM, both to the world and to connected VMs.
      */
-    private void fluctuateNetworkTraffic() {
+    public void fluctuateNetworkTraffic() {
         this.networkTrafficToWorld = this.networkTrafficGenerator.generateToWorld(this);
         for(Map.Entry<VM, Integer> entry : connectedVMs.entrySet()){
             entry.setValue(this.networkTrafficGenerator.generateBetweenVM(entry.getValue(), this.getMaxBandwidth() - this.networkTrafficToWorld));

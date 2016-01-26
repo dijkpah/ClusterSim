@@ -55,6 +55,10 @@ public class ExcelLogger {
      */
     private List<Map<Integer, Integer>> reservedVMs = new ArrayList<>(Params.TICK_COUNT);
 
+    private List<Map<Integer, Double>> cpuLoads = new ArrayList<>(Params.TICK_COUNT);
+
+    private List<Integer> slaViolations = new ArrayList<>(Params.TICK_COUNT);
+
     public ExcelLogger(ClusterSimulation simulation){
         this.simulation = simulation;
     }
@@ -69,10 +73,11 @@ public class ExcelLogger {
         int tickExternalNetworkUsage = 0;
         int tickInternalNetworkUsage = 0;
         int tickMigrationNetworkUsage = 0;
+        int tickSlaViolations = 0;
         Map<Server.State, Integer> tickServerStates = new HashMap<>();
         Map<Integer, Integer> tickRunningVMs = new HashMap<>();
         Map<Integer, Integer> tickReservedVMs = new HashMap<>();
-
+        Map<Integer, Double> tickCpuLoads = new HashMap<>();
 
         for (Node node : simulation.getCluster().getNodes()) {
             if (node instanceof Server) {
@@ -89,8 +94,12 @@ public class ExcelLogger {
                 }
 
                 // Number of VMs
+                if(server.isOverloaded()){
+                    tickSlaViolations += 1;
+                }
                 tickRunningVMs.put(server.getId(), server.getVms().size());
                 tickReservedVMs.put(server.getId(), server.getReservedVMs().size());
+                tickCpuLoads.put(server.getId(), server.getCPU() / (double) server.MAX_CPU);
             } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
                 tickBaseSwitchConsumption += aSwitch.getBaseConsumption();
@@ -121,6 +130,8 @@ public class ExcelLogger {
         this.serverStates.add(tickServerStates);
         this.runningVMs.add(tickRunningVMs);
         this.reservedVMs.add(tickReservedVMs);
+        this.cpuLoads.add(tickCpuLoads);
+        this.slaViolations.add(tickSlaViolations);
     }
 
     public void makeGraph(String outputFileName, Map<String, String> params) {
@@ -147,6 +158,7 @@ public class ExcelLogger {
         this.printStats(writer, "Network Bandwidth - Migrations (Mbps)       ", migrationNetworkUsage);
         this.printStats(writer, "Migrations                                  ", totalMigrations);
         this.printStats(writer, "Unfinished migrations                       ", remainingMigrations);
+        this.printStats(writer, "SLA violations (servers)                    ", slaViolations);
         for(Server.State state : Server.State.values()){
             this.printStats(writer, String.format("%1$-44s", "Server state - " + state), serverStates.stream().map(
                 item -> item.containsKey(state) ? item.get(state) : 0
@@ -158,6 +170,12 @@ public class ExcelLogger {
                     item -> item.get(server.getId())
             ).collect(Collectors.toList()));
             this.printStats(writer, String.format("%1$-44s", "Server " + server.getId() + " - reserved VMs"), reservedVMs.stream().map(
+                    item -> item.get(server.getId())
+            ).collect(Collectors.toList()));
+        }
+
+        for(Server server : simulation.getCluster().getServers()){
+            this.printStats(writer, String.format("%1$-44s", "Server " + server.getId() + " - CPULoad"), cpuLoads.stream().map(
                     item -> item.get(server.getId())
             ).collect(Collectors.toList()));
         }
@@ -174,11 +192,13 @@ public class ExcelLogger {
         }
     }
 
-    private void printStats(PrintWriter writer, String name, List<Integer> values) {
+    private <E> void printStats(PrintWriter writer, String name, List<E> values) {
         writer.print(name + Params.OUTPUT_SEPARATOR);
-        for (Integer value : values) {
+        for (E value : values) {
             writer.print(value + Params.OUTPUT_SEPARATOR);
         }
         writer.println();
     }
+
+
 }
