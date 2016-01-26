@@ -1,9 +1,5 @@
 package cluster;
 
-import cluster.Cable;
-import cluster.Cluster;
-import cluster.Server;
-import cluster.World;
 import graph.Node;
 import simulation.Params;
 import switches.MainSwitch;
