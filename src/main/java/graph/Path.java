@@ -12,6 +12,7 @@ public class Path implements SimulationEntity {
     @NonNull protected List<Edge> edges;
     @NonNull protected Node firstEndPoint;
     @NonNull protected Node secondEndPoint;
+    Random rng = new Random(1L);
 
     public void tick() {
     }
@@ -102,6 +103,8 @@ public class Path implements SimulationEntity {
             Integer value  = dist.get(node);
             if (minEntry == null || value.compareTo(minEntry.getValue()) < 0)
             {
+                minEntry = new AbstractMap.SimpleEntry<>(node, value);
+            }else if(value.compareTo(minEntry.getValue()) == 0 && rng.nextBoolean()){//Choose same length path randomly
                 minEntry = new AbstractMap.SimpleEntry<>(node, value);
             }
         }
