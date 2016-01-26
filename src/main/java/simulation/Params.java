@@ -25,10 +25,10 @@ public class Params {
     /**
      * The capacity of a cable, in Mb/s.
      */
-    public static final int CABLE_CAPACITY_SERVER_TO_TOR = 10000;
-    public static final int CABLE_CAPACITY_TOR_TO_HUB = 40000;
-    public static final int CABLE_CAPACITY_HUB_TO_MAIN = 40000;
-    public static final int CABLE_CAPACITY_MAIN_TO_WORLD = 100000;
+    public static final int CABLE_CAPACITY_SERVER_TO_TOR = 4000;
+    public static final int CABLE_CAPACITY_TOR_TO_HUB = 20000;
+    public static final int CABLE_CAPACITY_HUB_TO_MAIN = 20000;
+    public static final int CABLE_CAPACITY_MAIN_TO_WORLD = 40000;
     /**
      * The duration of a tick in seconds.
      */
@@ -40,7 +40,7 @@ public class Params {
     /**
      * The average network traffic in Mb/s between connected VMs.
      */
-    public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 50;
+    public static final int NETWORK_USAGE_VM_TO_VM_AVERAGE = 100;
 
     /**
      * The percentage of the network usage of a vm to the world compared to the maximum bandwidth, when the CPULoad is 100%
@@ -50,7 +50,7 @@ public class Params {
 
     public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.4);
     public static final Cluster<Node,Cable> CLUSTER = ClusterFactory.simpleCluster();
-    public static final int TICK_COUNT = 20;
+    public static final int TICK_COUNT = 240;
 
 
     public static final String OUTPUT_FILE_PREFIX = "output/simulation-";

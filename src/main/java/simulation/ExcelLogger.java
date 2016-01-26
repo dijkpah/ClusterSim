@@ -94,8 +94,8 @@ public class ExcelLogger {
             } else if (node instanceof Switch) {
                 Switch aSwitch = (Switch) node;
                 tickBaseSwitchConsumption += aSwitch.getBaseConsumption();
-                tickExternalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
                 tickInternalNetworkConsumption += aSwitch.getInternalCommunicationConsumption();
+                tickExternalNetworkConsumption += aSwitch.getExternalCommunicationConsumption();
                 tickMigrationNetworkConsumption += aSwitch.getMigrationCommunicationConsumption();
             } else if (!(node instanceof World)) {
                 new Exception("unknown Node type: " + node.getClass().getName()).printStackTrace();
@@ -110,8 +110,8 @@ public class ExcelLogger {
 
         this.serverConsumption.add(tickServerConsumption);
         this.baseSwitchConsumption.add(tickBaseSwitchConsumption);
-        this.externalNetworkConsumption.add(tickExternalNetworkConsumption);
         this.internalNetworkConsumption.add(tickInternalNetworkConsumption);
+        this.externalNetworkConsumption.add(tickExternalNetworkConsumption);
         this.migrationNetworkConsumption.add(tickMigrationNetworkConsumption);
         this.totalMigrations.add(simulation.getTotalMigrations());
         this.remainingMigrations.add(simulation.getRemainingMigrations());
@@ -139,11 +139,11 @@ public class ExcelLogger {
         this.printParams(writer, params);
         this.printStats(writer, "Power Servers (W)                           ", serverConsumption);
         this.printStats(writer, "Power Switch - Base (W)                     ", baseSwitchConsumption);
-        this.printStats(writer, "Power Switch - External Traffic (W)         ", externalNetworkConsumption);
         this.printStats(writer, "Power Switch - Internal Traffic (W)         ", internalNetworkConsumption);
+        this.printStats(writer, "Power Switch - External Traffic (W)         ", externalNetworkConsumption);
         this.printStats(writer, "Power Switch - Migrations (W)               ", migrationNetworkConsumption);
-        this.printStats(writer, "Network Bandwidth - External Traffic (Mbps) ", externalNetworkUsage);
         this.printStats(writer, "Network Bandwidth - Internal Traffic (Mbps) ", internalNetworkUsage);
+        this.printStats(writer, "Network Bandwidth - External Traffic (Mbps) ", externalNetworkUsage);
         this.printStats(writer, "Network Bandwidth - Migrations (Mbps)       ", migrationNetworkUsage);
         this.printStats(writer, "Migrations                                  ", totalMigrations);
         this.printStats(writer, "Unfinished migrations                       ", remainingMigrations);

@@ -25,8 +25,8 @@ public class CloudSimulation extends ClusterSimulation{
     private static final int nthServerSleeps = 5;//every nth server is put to sleep
     private static final int amountOfRacks = 4;
     private static final int serversPerRack = 20;
-    private static final double fractionInGroup = 0.4;
-    private static final int groupSize = 3;
+    private static final double fractionInGroup = 0.6;
+    private static final int groupSize = 4;
 
 
     public CloudSimulation(Cluster<Node, Cable> cluster, MigrationPolicy migrationPolicy) {
