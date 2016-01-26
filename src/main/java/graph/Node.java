@@ -14,7 +14,7 @@ import java.util.Set;
 @Data
 @ToString(exclude="edges")
 @EqualsAndHashCode(exclude = "edges")
-public abstract class Node implements SimulationEntity {
+public abstract class Node implements SimulationEntity, Comparable{
 
     @NonNull public final int id;
 
@@ -56,4 +56,9 @@ public abstract class Node implements SimulationEntity {
     }
 
     public abstract void tick();
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getId()-((Node)o).getId();
+    }
 }

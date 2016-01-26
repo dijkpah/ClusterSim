@@ -38,9 +38,6 @@ public abstract class MigrationPolicy {
                     }
                 }
             }
-
-
-
         }
 
         return result;
