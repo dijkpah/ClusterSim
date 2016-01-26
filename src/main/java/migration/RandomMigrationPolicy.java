@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * Migration policy which does not do migrations
+ * Migration policy which does random migrations
  */
 public class RandomMigrationPolicy extends MigrationPolicy {
     private final static Logger logger = Logger.getLogger(RandomMigrationPolicy.class.getName());
@@ -24,7 +24,7 @@ public class RandomMigrationPolicy extends MigrationPolicy {
     @Override
     Server determineMigrationTarget(VM vm, Cluster<Node, Cable> cluster) {
         logger.fine("Allocating VM " + vm);
-        Random random = new Random();
+        Random random = new Random(2L);
 
         // Get all possible targets
         List<Server> possibleServers = cluster.getServers();
