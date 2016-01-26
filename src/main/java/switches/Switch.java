@@ -46,11 +46,9 @@ public abstract class Switch extends Node implements SimulationEntity {
         int cableCapacity = 0;
         for(Edge edge: getEdges()){
             if(edge instanceof Cable){
-                cableBandwidthUsed += ((Cable) edge).getExternalCommunicationBandwidth();
-                cableCapacity += ((Cable) edge).getCapacity();
-                if(((Cable) edge).getExternalCommunicationBandwidth() > ((Cable) edge).getCapacity()){
-                    logger.severe("Cable has more external communication than bandwidth: " + edge);
-                }
+                Cable cable = (Cable) edge;
+                cableBandwidthUsed += cable.getExternalCommunicationBandwidth();
+                cableCapacity += cable.getCapacity();
             }
         }
         logger.finest(this + ": " + cableBandwidthUsed + "/" + cableCapacity);
@@ -62,11 +60,9 @@ public abstract class Switch extends Node implements SimulationEntity {
         int cableCapacity = 0;
         for(Edge edge: getEdges()){
             if(edge instanceof Cable){
-                cableBandwidthUsed += ((Cable) edge).getInternalCommunicationBandwidth();
-                cableCapacity += ((Cable) edge).getCapacity();
-                if(((Cable) edge).getInternalCommunicationBandwidth() > ((Cable) edge).getCapacity()){
-                    logger.severe("Cable has more internal communication than bandwidth: " + edge);
-                }
+                Cable cable = (Cable) edge;
+                cableBandwidthUsed += cable.getInternalCommunicationBandwidth();
+                cableCapacity += cable.getCapacity();
             }
         }
         return (int)((double)cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption()));
@@ -77,11 +73,9 @@ public abstract class Switch extends Node implements SimulationEntity {
         int cableCapacity = 0;
         for(Edge edge: getEdges()){
             if(edge instanceof Cable){
-                cableBandwidthUsed += ((Cable) edge).getMigrationBandwidth();
-                cableCapacity += ((Cable) edge).getCapacity();
-                if(((Cable) edge).getMigrationBandwidth() > ((Cable) edge).getCapacity()){
-                    logger.severe("Cable has more migration communication than bandwidth: " + edge);
-                }
+                Cable cable = (Cable) edge;
+                cableBandwidthUsed += cable.getMigrationBandwidth();
+                cableCapacity += cable.getCapacity();
             }
         }
         return (int)((double)cableBandwidthUsed/cableCapacity * (getMaxConsumption() - getBaseConsumption()));
