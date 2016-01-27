@@ -106,6 +106,9 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
             }
         }
         System.out.println("BEST FIT SERVER AVAILABLE");
+        if(source.equals(target)){
+            return null;
+        }
         return target;
     }
 
