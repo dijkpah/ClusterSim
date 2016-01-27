@@ -124,15 +124,6 @@ public abstract class VM implements SimulationEntity, Comparable{
 
     }
 
-    /**
-     * Connect this VM to another VM.
-     * @param other The VM to connect to.
-     */
-    public void connectToVM(VM other, VMGroup group) {
-        this.connectedVMs.put(other, 0);
-        this.group = group;
-    }
-
     public void tick() {
         this.fluctuateLoad();
         this.fluctuateNetworkTraffic();

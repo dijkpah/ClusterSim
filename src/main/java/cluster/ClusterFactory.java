@@ -4,16 +4,73 @@ import graph.Node;
 import simulation.Params;
 import switches.MainSwitch;
 import switches.Switch;
-import vm.M4LargeVM;
-import vm.M4XLargeVM;
-import vm.VM;
-import vm.VMGroup;
+import vm.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
 public class ClusterFactory {
+
+    /**
+     * Creates a simple cluster with one switch and the given number of servers.
+     * No VMs are installed.
+     * The world has id 0, the switch id 1 and the servers counting from 2.
+     */
+    public static Cluster<Node, Cable> simpleGroupedCluster() {
+        List<Node> nodes = new ArrayList<>();
+        List<Cable> edges = new ArrayList<>();
+
+        // Create world
+        World world = new World(0);
+        nodes.add(world);
+
+        // Create switch
+        Switch switch1 = new MainSwitch(1);
+        Switch switch2 = new MainSwitch(2);
+        Switch switch3 = new MainSwitch(3);
+        nodes.add(switch1);
+        nodes.add(switch2);
+        nodes.add(switch3);
+
+
+        Server server1 = new Server(1);
+        Server server2 = new Server(2);
+        nodes.add(server1);
+        nodes.add(server2);
+
+        // connect to world
+        edges.add(createCable(world, switch2, Params.CABLE_CAPACITY_MAIN_TO_WORLD));
+        edges.add(createCable(switch1, switch2, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(createCable(switch2, switch3, Params.CABLE_CAPACITY_TOR_TO_HUB));
+        edges.add(createCable(server1, switch1, Params.CABLE_CAPACITY_SERVER_TO_TOR));
+        edges.add(createCable(server2, switch3, Params.CABLE_CAPACITY_SERVER_TO_TOR));
+
+        VM vm1 = new M42XLargeVM(1);
+        VM vm2 = new M4XLargeVM(2);
+        VMGroup group1 = new VMGroup(1, new TreeSet<>());
+        group1.addVM(vm1);
+        group1.addVM(vm2);
+
+
+        VM vm3 = new M4XLargeVM(3);
+        VM vm4 = new M4XLargeVM(4);
+        VM vm5 = new M4XLargeVM(5);
+        VMGroup group2 = new VMGroup(2, new TreeSet<>());
+        group2.addVM(vm2);
+        group2.addVM(vm3);
+        group2.addVM(vm4);
+
+
+        server1.addVM(vm1);
+        server1.addVM(vm3);
+        server2.addVM(vm2);
+        server2.addVM(vm4);
+        server2.addVM(vm5);
+
+        // Return the cluster
+        return new Cluster<>("Simple grouped cluster", world, nodes, edges);
+    }
 
     /**
      * Creates a simple cluster with one switch and the given number of servers.
@@ -88,14 +145,12 @@ public class ClusterFactory {
 
         // Vms are linked
         VMGroup group0 = new VMGroup(0, new TreeSet<>());
-        vm1.connectToVM(vm2,group0);
-        group0.getVms().add(vm1);
-        group0.getVms().add(vm2);
+        group0.addVM(vm1);
+        group0.addVM(vm2);
 
         VMGroup group1 = new VMGroup(0, new TreeSet<>());
-        vm3.connectToVM(vm4,group1);
-        group1.getVms().add(vm3);
-        group1.getVms().add(vm4);
+        group1.addVM(vm3);
+        group1.addVM(vm4);
 
 
 

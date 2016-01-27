@@ -24,8 +24,9 @@ public class CloudSimulation extends ClusterSimulation{
     private static final int nthServerSleeps = 5;//every nth server is put to sleep
     private static final int amountOfRacks = 4;
     private static final int serversPerRack = 20;
-    private static final double fractionInGroup = 0.6;
-    private static final int groupSize = 4;
+    private static final double fractionInGroup = 0.8;
+    private static final int minGroupSize = 2;
+    private static final int maxGroupSize = 4;
 
 
     public CloudSimulation(Cluster<Node, Cable> cluster, MigrationPolicy migrationPolicy) {
@@ -167,24 +168,25 @@ public class CloudSimulation extends ClusterSimulation{
 
         // Vms are linked
         int amountOfGroups = 0;
-        for(int i=0;i<createdVMs*fractionInGroup;i+=groupSize){
+        int currentGroupSize = minGroupSize;
+        for(int i=0;i<createdVMs*fractionInGroup;){
             //create new group
             VMGroup group = new VMGroup(amountOfGroups, new TreeSet<>());
-            for(int j=0;j<groupSize;j++){
+            for(int j=0;j<currentGroupSize;j++){
                 //add a VM to group
                 int index = rng.nextInt(vms.size());
                 VM selectedVM = vms.get(index);
-                group.getVms().add(selectedVM);
+                group.addVM(selectedVM);
 
                 //remove VM from vms
                 vms.remove(index);
-
-                //connect vms in group to each other
-                for(VM vm : group.getVms()){
-                    selectedVM.connectToVM(vm, group);
-                }
             }
             amountOfGroups++;
+            i+=currentGroupSize;
+            currentGroupSize = (currentGroupSize+1)% maxGroupSize;
+            if(currentGroupSize ==0){
+                currentGroupSize = minGroupSize;
+            }
         }
 
         // Return the cluster
@@ -211,7 +213,7 @@ public class CloudSimulation extends ClusterSimulation{
         params.put("Amount of server racks with TOR switches", ""+amountOfRacks);
         params.put("Amount of servers in a server rack", ""+serversPerRack);
         params.put("Fraction of VMs that belong to a VM group", ""+fractionInGroup);
-        params.put("Size of VM groups", ""+groupSize);
+        params.put("Size of VM groups", ""+ minGroupSize +"-"+maxGroupSize);
 
         // Start
         simulation.run(ticks);

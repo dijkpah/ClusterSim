@@ -78,8 +78,8 @@ public class ClusterTest {
         VM vm2 = new M4XLargeVM(2);
 
         VMGroup group0 = new VMGroup(0, new TreeSet<>());
-        vm1.connectToVM(vm2,group0);
-        vm2.connectToVM(vm1,group0);
+        group0.addVM(vm1);
+        group0.addVM(vm2);
 
         server1.addVM(vm1);
         server2.addVM(vm2);
