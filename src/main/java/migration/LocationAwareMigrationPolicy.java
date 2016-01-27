@@ -33,7 +33,7 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
 
             //IF GROUPED FIND SERVER IN GROUP
             for(Server server : groupedServers){
-                int freeCPU = server.getCPU()- server.getCPU();
+                int freeCPU = server.MAX_CPU - server.getCPU()- vm.getCPU();
                 if(freeCPU - vm.getCPU() > 0){//if there are enough cores available
                     if(freeCPU > bestFreeCPU){//if it is a better fit
                         target = server;
@@ -42,9 +42,8 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
                 }
             }
             if(target != null){
+                System.out.println("GROUPED SERVER AVAILABLE");
                 return target;
-            }else{
-                System.out.println("GROUPED TARGET SERVER FOUND");
             }
 
             Node tor = (Node) source.getNeighbours().toArray()[0];
@@ -66,6 +65,7 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
                 }
             }
             if(target != null){
+                System.out.println("RACK SERVER AVAILABLE");
                 return target;
             }
 
@@ -88,13 +88,14 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
                 }
             }
             if(target != null){
+                System.out.println("CLUSTER SERVER AVAILABLE");
                 return target;
             }
         }
         //ELSE BEST FIT
-        List<Server> possibleServers = new ArrayList<>();
+        Set<Server> possibleServers = new TreeSet<>();
         possibleServers.addAll(cluster.getServers());// Get all possible targets
-      //  possibleServers.remove(source);
+        possibleServers.remove(source);
         for(Server server : possibleServers){
             int freeCPU = server.MAX_CPU - server.getCPU()- vm.getCPU();
             if(freeCPU - vm.getCPU() > 0 && !server.equals(source)){//if there are enough cores available
@@ -104,25 +105,47 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
                 }
             }
         }
+        System.out.println("BEST FIT SERVER AVAILABLE");
         return target;
     }
 
+
+    //1. TRY GROUPED BUT NOT ON THIS SERVER
+    //2. TRY GROUPED
+    //3. TRY LARGEST
+
     @Override
     Set<VM> determineVMsToMigrate(Server server) {
-        //NON-GROUPED FIRST
         Set<VM> result = new HashSet<>();
         if(server.getNonMigratingCPU()+server.getReservedCPU() > server.MAX_CPU*upperThreshold) {
             logger.fine("Server has exceeded upper threshold: " + server);
 
             while(server.getNonMigratingVMs().size() > 1 && server.getNonMigratingCPU()+server.getReservedCPU() > server.MAX_CPU*upperThreshold){
 
-                // If possible pick non-grouped
+                //PICK GROUPED (BUT NOT ON THIS SERVER)
                 VM bestVM = null;
                 for(VM vm : server.getVms()){
-                    if(vm.getState().equals(VM.State.RUNNING) && vm.getGroup() == null && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
+                    //FIND OUT OF THERE ARE MORE VMS OF THIS GROUP ON THE SERVER
+                    boolean groupedOnServer = false;
+                    if(vm.getGroup() != null) {
+                        for (VM v : vm.getGroup().getVms()) {
+                            if (!v.equals(vm) && v.getServer().equals(vm.getServer())) {
+                                groupedOnServer = true;
+                            }
+                        }
+                    }
+                    if(vm.getState().equals(VM.State.RUNNING) && vm.getGroup() != null && !groupedOnServer && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
                         bestVM = vm;
                     }
                 }
+
+                //ELSE TRY NON-GROUPED
+                for(VM vm : server.getVms()){
+                    if(vm.getState().equals(VM.State.RUNNING) && vm.getGroup() != null && (bestVM == null || vm.getCPU() > bestVM.getCPU())){
+                        bestVM = vm;
+                    }
+                }
+
                 if(bestVM == null){
                     //Else pick largest
                     bestVM = super.selectLargest(server);
