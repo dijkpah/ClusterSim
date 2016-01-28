@@ -4,8 +4,8 @@ import cluster.Cable;
 import cluster.Cluster;
 import cluster.ClusterFactory;
 import graph.Node;
+import migration.LocationAwareMigrationPolicy2;
 import migration.MigrationPolicy;
-import migration.RandomMigrationPolicy;
 
 import java.util.logging.Level;
 
@@ -48,9 +48,9 @@ public class Params {
     public static final double NETWORK_USAGE_VM_TO_WORLD_PERCENTAGE = 0.5;
 
 
-    public static final MigrationPolicy MIGRATION_POLICY = new RandomMigrationPolicy(0.8);
+    public static final MigrationPolicy MIGRATION_POLICY = new LocationAwareMigrationPolicy2(0.6);
     public static final Cluster<Node,Cable> CLUSTER = ClusterFactory.simpleCluster();
-    public static final int TICK_COUNT = 240;
+    public static final int TICK_COUNT = 4*60*12;
 
 
     public static final String OUTPUT_FILE_PREFIX = "output/simulation-";

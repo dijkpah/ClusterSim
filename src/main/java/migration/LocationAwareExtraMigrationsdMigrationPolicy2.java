@@ -18,7 +18,7 @@ public class LocationAwareExtraMigrationsdMigrationPolicy2 extends LocationAware
         this.upperThreshold = upperThreshold;
     }
 
-    public static final double migrationchance = 0.1;
+    public static final double migrationchance = 0.25;
 
     @Override
     Set<VM> determineVMsToMigrate(Server server) {
