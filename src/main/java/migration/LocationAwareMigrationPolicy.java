@@ -162,4 +162,7 @@ public class LocationAwareMigrationPolicy extends MigrationPolicy {
         }
         return result;
     }
+    public String toString(){
+        return "Location aware grouped migration policy with upper Threshold "+upperThreshold;
+    }
 }

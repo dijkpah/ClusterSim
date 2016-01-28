@@ -68,4 +68,9 @@ public class LocationAwareMigrationPolicy2 extends LocationAwareMigrationPolicy 
         }
         return result;
     }
+
+
+    public String toString(){
+        return "Location aware 2 nongrouped migration policy with upper Threshold "+upperThreshold;
+    }
 }

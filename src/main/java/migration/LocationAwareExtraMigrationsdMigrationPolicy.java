@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-public class LocationAwareExtraMigrationsdMigrationPolicy extends LocationAwareMigrationPolicy2 {
+public class LocationAwareExtraMigrationsdMigrationPolicy extends LocationAwareMigrationPolicy {
 
     private double upperThreshold;
 
@@ -15,9 +15,10 @@ public class LocationAwareExtraMigrationsdMigrationPolicy extends LocationAwareM
 
     public LocationAwareExtraMigrationsdMigrationPolicy(double upperThreshold){
         super(upperThreshold);
+        this.upperThreshold = upperThreshold;
     }
 
-    public static final double migrationchance = 0.01;
+    public static final double migrationchance = 0.25001;
 
     @Override
     Set<VM> determineVMsToMigrate(Server server) {
@@ -43,5 +44,8 @@ public class LocationAwareExtraMigrationsdMigrationPolicy extends LocationAwareM
         }
         result.addAll(super.determineVMsToMigrate(server));
         return result;
+    }
+    public String toString(){
+        return "Location aware grouped migration policy with upper Threshold "+upperThreshold+" and "+migrationchance+" chance on extra migration";
     }
 }

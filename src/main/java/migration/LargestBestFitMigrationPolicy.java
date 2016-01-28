@@ -71,4 +71,9 @@ public class LargestBestFitMigrationPolicy extends MigrationPolicy {
         }
         return result;
     }
+
+
+    public String toString(){
+        return "Largest Best Fit migration policy with upper Threshold "+upperThreshold;
+    }
 }
