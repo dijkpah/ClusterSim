@@ -37,6 +37,7 @@ public class LocationAwareExtraMigrationsdMigrationPolicy extends LocationAwareM
             }
             if (vm.getState().equals(VM.State.RUNNING) && chosenMigration == null && vm.getGroup() != null && !groupedOnServer && Math.random() < migrationchance) {
                 result.add(vm);
+                vm.setState(VM.State.MIGRATING);
                 chosenMigration = vm;
             }
         }
